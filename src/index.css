@@ -1,0 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------------- BASE STYLES ---------------- */
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 text-gray-900 font-sans min-h-screen;
+  }
+}
+
+/* ---------------- COMPONENTS ---------------- */
+@layer components {
+  /* Kart tasarımı */
+  .card {
+    @apply bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl p-8 border border-gray-300
+           hover:shadow-2xl hover:border-gray-400 transition-all duration-300;
+  }
+
+  /* INPUT TASARIMI (MARKA, MODEL, YIL) */
+  .input {
+    @apply w-full rounded-xl border-2 border-gray-400 px-4 py-2.5 text-base font-medium
+           bg-gradient-to-b from-gray-50 to-gray-200 text-gray-900 placeholder-gray-500
+           shadow-[inset_0_1px_2px_rgba(0,0,0,0.2),0_0_6px_rgba(59,130,246,0.25)]
+           hover:shadow-[inset_0_1px_3px_rgba(0,0,0,0.25),0_0_10px_rgba(59,130,246,0.35)]
+           focus:shadow-[inset_0_1px_3px_rgba(0,0,0,0.25),0_0_14px_rgba(59,130,246,0.45)]
+           focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500
+           transition-all duration-300 ease-in-out !important;
+  }
+
+  /* Buton tasarımı */
+  .btn {
+    @apply inline-flex items-center justify-center px-6 py-3 rounded-xl font-semibold text-white
+           bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-indigo-600 hover:to-blue-600
+           shadow-md hover:shadow-xl transition-all duration-300 active:scale-[0.97];
+  }
+
+  /* Başlık ve alt metin */
+  .heading {
+    @apply text-2xl font-bold text-gray-900 mb-4;
+  }
+
+  .subtext {
+    @apply text-sm text-gray-600;
+  }
+
+  /* Form container */
+  .form-section {
+    @apply card max-w-lg mx-auto mt-10;
+  }
+}
