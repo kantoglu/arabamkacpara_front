@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Select from "react-select";
 
+/* --- MARKA / MODEL VERİLERİ --- */
 const markaModelMap = {
   AlfaRomeo: ["Giulia", "Stelvio", "Tonale"],
   Audi: ["A3", "A4", "Q5", "Q7"],
@@ -43,6 +44,7 @@ const markaModelMap = {
   Volvo: ["XC40", "XC60", "S60"],
 };
 
+/* --- BAŞLANGIÇ FORM VERİLERİ --- */
 const initialState = {
   modelYili: "",
   marka: "",
@@ -68,10 +70,7 @@ const initialState = {
     OnTampon: "1",
     ArkaTampon: "1",
   },
-  tramer: {
-    value: "",
-    tutar: "",
-  },
+  tramer: { value: "", tutar: "" },
   adSoyad: "",
   telefon: "",
   eposta: "",
@@ -103,105 +102,58 @@ const steps = [
   { id: "review", label: "Özet & Gönder" },
 ];
 
-// Araç parçaları - yüzde bazlı koordinatlar (resmin boyutuna göre otomatik ayarlanır)
-const carPartAreas = {
-  OnTampon: { left: "41%", top: "6.5%", width: "18%", height: "7%" },
-  MotorKaputu: { left: "41%", top: "15%", width: "18%", height: "19%" },
-  Tavan: { left: "41%", top: "35.5%", width: "18%", height: "27%" },
-  ArkaKaput: { left: "41%", top: "64%", width: "18%", height: "19%" },
-  ArkaTampon: { left: "41%", top: "84%", width: "18%", height: "7%" },
-  
-  SolOnCamurluk: { left: "20%", top: "15%", width: "19.5%", height: "13%" },
-  SolOnKapi: { left: "20%", top: "29%", width: "19.5%", height: "16%" },
-  SagArkaKapi: { left: "20%", top: "46.5%", width: "19.5%", height: "16%" },
-  SolArkaCamurluk: { left: "20%", top: "64%", width: "19.5%", height: "19%" },
-  
-  SagOnCamurluk: { left: "60.5%", top: "15%", width: "19.5%", height: "13%" },
-  SagOnKapi: { left: "60.5%", top: "29%", width: "19.5%", height: "16%" },
-  SagArkaKapi: { left: "60.5%", top: "46.5%", width: "19.5%", height: "16%" },
-  SagArkaCamurluk: { left: "60.5%", top: "64%", width: "19.5%", height: "19%" },
-};
-
-const partLabels = {
-  OnTampon: "Ön Tampon",
-  MotorKaputu: "Motor Kaputu",
-  Tavan: "Tavan",
-  ArkaKaput: "Arka Kaput",
-  ArkaTampon: "Arka Tampon",
-  SolOnCamurluk: "Sol Ön Çamurluk",
-  SolOnKapi: "Sol Ön Kapı",
-  SagArkaKapi: "Sol Arka Kapı",
-  SolArkaCamurluk: "Sol Arka Çamurluk",
-  SagOnCamurluk: "Sağ Ön Çamurluk",
-  SagOnKapi: "Sağ Ön Kapı",
-  SagArkaKapi: "Sağ Arka Kapı",
-  SagArkaCamurluk: "Sağ Arka Çamurluk",
-};
-
-// İnteraktif Araç Diyagramı Bileşeni
+/* --- ARAÇ DİYAGRAMI --- */
 function CarDiagram({ expertizData, onPartClick, selectedPart }) {
-  // Hangi parçaların boyalı/değişmiş olduğunu kontrol et
-  const isPainted = (partKey) => {
-    const value = expertizData[partKey];
-    return value === "2" || value === "3"; // Değişmiş veya Boyalı
+  const carPartAreas = {
+    OnTampon: { left: "41%", top: "6.5%", width: "18%", height: "7%" },
+    MotorKaputu: { left: "41%", top: "15%", width: "18%", height: "19%" },
+    Tavan: { left: "41%", top: "35.5%", width: "18%", height: "27%" },
+    ArkaKaput: { left: "41%", top: "64%", width: "18%", height: "19%" },
+    ArkaTampon: { left: "41%", top: "84%", width: "18%", height: "7%" },
+    SolOnCamurluk: { left: "20%", top: "15%", width: "19.5%", height: "13%" },
+    SolOnKapi: { left: "20%", top: "29%", width: "19.5%", height: "16%" },
+    SagOnCamurluk: { left: "60.5%", top: "15%", width: "19.5%", height: "13%" },
+    SagOnKapi: { left: "60.5%", top: "29%", width: "19.5%", height: "16%" },
   };
+  const partLabels = {
+    OnTampon: "Ön Tampon",
+    MotorKaputu: "Motor Kaputu",
+    Tavan: "Tavan",
+    ArkaKaput: "Arka Kaput",
+    ArkaTampon: "Arka Tampon",
+    SolOnCamurluk: "Sol Ön Çamurluk",
+    SolOnKapi: "Sol Ön Kapı",
+    SagOnCamurluk: "Sağ Ön Çamurluk",
+    SagOnKapi: "Sağ Ön Kapı",
+  };
+  const isPainted = (key) => expertizData[key] === "2" || expertizData[key] === "3";
 
   return (
     <div className="relative w-full max-w-md mx-auto">
-      <div className="relative select-none">
-        {/* Ana araç resmi */}
-        <img 
-          src="https://s0.shbdn.com/assets/images/vehicle_plan:0c6fff263000435d73ead7462c3c0baa.png" 
-          alt="Araç Diyagramı"
-          className="w-full h-auto block"
-          draggable="false"
+      <img
+        src="https://s0.shbdn.com/assets/images/vehicle_plan:0c6fff263000435d73ead7462c3c0baa.png"
+        alt="Araç Diyagramı"
+        className="w-full h-auto block"
+        draggable="false"
+      />
+      {Object.entries(carPartAreas).map(([key, area]) => (
+        <div
+          key={key}
+          onClick={() => onPartClick(key)}
+          className={`absolute cursor-pointer transition-all ${
+            selectedPart === key
+              ? "border-2 border-indigo-500 bg-indigo-500/10"
+              : "border border-transparent hover:bg-indigo-400/10"
+          }`}
+          style={area}
+          title={partLabels[key]}
         />
-        
-        {/* Boyalı overlay resmi - sadece boyalı/değişmiş parçalar için */}
-        {Object.entries(carPartAreas).map(([key, area]) => (
-          isPainted(key) && (
-            <div
-              key={`painted-${key}`}
-              className="absolute pointer-events-none"
-              style={{
-                left: area.left,
-                top: area.top,
-                width: area.width,
-                height: area.height,
-                backgroundImage: 'url(https://s0.shbdn.com/assets/images/vehicle_painted:4843262a3bb9d929d0036be297a77827.png)',
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-                opacity: 0.85,
-              }}
-            />
-          )
-        ))}
-        
-        {/* Tıklanabilir alanlar */}
-        {Object.entries(carPartAreas).map(([key, area]) => (
-          <div
-            key={key}
-            onClick={() => onPartClick(key)}
-            className="absolute cursor-pointer transition-all hover:bg-blue-400 hover:bg-opacity-20"
-            style={{
-              left: area.left,
-              top: area.top,
-              width: area.width,
-              height: area.height,
-              border: selectedPart === key ? "3px solid #4f46e5" : "2px solid transparent",
-              borderRadius: "4px",
-            }}
-            title={partLabels[key]}
-          />
-        ))}
-      </div>
-      
-      {/* Renk Açıklamaları */}
+      ))}
       <div className="flex justify-center gap-4 mt-4 text-xs">
         {expertizOptions.map((opt) => (
           <div key={opt.value} className="flex items-center gap-1.5">
             <div className={`w-4 h-4 rounded ${opt.color}`} />
-            <span className="text-slate-600">{opt.label}</span>
+            <span className="text-slate-600 dark:text-slate-300">{opt.label}</span>
           </div>
         ))}
       </div>
@@ -209,6 +161,7 @@ function CarDiagram({ expertizData, onPartClick, selectedPart }) {
   );
 }
 
+/* --- ANA FORM --- */
 export default function CarForm({ onSubmit, loading }) {
   const [formData, setFormData] = useState(initialState);
   const [stepIndex, setStepIndex] = useState(0);
@@ -217,254 +170,257 @@ export default function CarForm({ onSubmit, loading }) {
   const updateField = (name, value) => {
     if (name.includes(".")) {
       const [parent, child] = name.split(".");
-      setFormData((prev) => ({
-        ...prev,
-        [parent]: { ...prev[parent], [child]: value },
-      }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
-  };
-
-  const handlePartClick = (partKey) => {
-    setSelectedPart(partKey);
-  };
-
-  const handleExpertizSelect = (value) => {
-    if (selectedPart) {
-      updateField(`expertiz.${selectedPart}`, value);
-    }
-  };
-
-  const next = () => {
-    if (steps[stepIndex].id === "contact") {
-      if (!formData.adSoyad?.trim()) {
-        alert("Lütfen ad soyad girin.");
-        return;
-      }
-      if (!formData.telefon?.trim()) {
-        alert("Lütfen telefon girin.");
-        return;
-      }
-    }
-    setStepIndex((i) => Math.min(i + 1, steps.length - 1));
-  };
-
-  const back = () => {
-    setStepIndex((i) => Math.max(i - 1, 0));
-    setSelectedPart(null);
-  };
-
-  const handleSubmit = (e) => {
-    e?.preventDefault();
-    onSubmit(formData);
+      setFormData((prev) => ({ ...prev, [parent]: { ...prev[parent], [child]: value } }));
+    } else setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const progress = (stepIndex / (steps.length - 1)) * 100;
-  const inputClass = "w-full rounded-lg border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-100";
+  const next = () => setStepIndex((i) => Math.min(i + 1, steps.length - 1));
+  const back = () => setStepIndex((i) => Math.max(i - 1, 0));
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit(formData);
+  };
 
   const markaOptions = Object.keys(markaModelMap).map((m) => ({ value: m, label: m }));
-  const seriOptions = (formData.marka ? markaModelMap[formData.marka] : []).map((s) => ({ value: s, label: s }));
+  const seriOptions =
+    formData.marka ? markaModelMap[formData.marka].map((s) => ({ value: s, label: s })) : [];
 
   return (
-    <div className="w-full max-w-xl mx-auto bg-white rounded-2xl shadow-lg p-6 md:p-8 space-y-6 border border-slate-100">
+    <form onSubmit={handleSubmit} className="w-full max-w-xl mx-auto card p-6 md:p-8 space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-bold text-slate-800">🚗 Adım Adım Araç Formu</h2>
-          <p className="text-xs text-slate-500">Adım adım ilerle — her adımda bir soru.</p>
+          <h2 className="text-lg font-bold text-slate-800 dark:text-gray-100">
+            🚗 Adım Adım Araç Formu
+          </h2>
+          <p className="text-xs text-slate-500 dark:text-slate-400">
+            Adım adım ilerle — her adımda bir soru.
+          </p>
         </div>
-        <div className="text-right text-xs text-slate-500">{Math.round(progress)}%</div>
+        <div className="text-xs text-slate-500">{Math.round(progress)}%</div>
       </div>
 
-      {/* Progress bar */}
-      <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-        <div className="h-2 bg-gradient-to-r from-indigo-500 to-blue-500 transition-all" style={{ width: `${progress}%` }} />
+      <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
+        <div
+          className="h-2 bg-gradient-to-r from-indigo-500 to-blue-500 transition-all"
+          style={{ width: `${progress}%` }}
+        />
       </div>
 
-      {/* Step content */}
-      <div className="min-h-[400px] flex flex-col justify-center space-y-4">
-        {steps[stepIndex].id === "basic" && (
-          <>
-            <label className="text-sm text-slate-600 block">Marka</label>
-            <Select
-              options={markaOptions}
-              value={formData.marka ? { value: formData.marka, label: formData.marka } : null}
-              onChange={(option) => {
-                updateField("marka", option.value);
-                updateField("seri", "");
-              }}
-              placeholder="Marka seçin"
-            />
+      {/* 1️⃣ Basic */}
+      {steps[stepIndex].id === "basic" && (
+        <>
+          <label className="text-sm text-slate-600 dark:text-slate-400 block">Marka</label>
+          <Select
+            options={markaOptions}
+            value={formData.marka ? { value: formData.marka, label: formData.marka } : null}
+            onChange={(option) => {
+              updateField("marka", option.value);
+              updateField("seri", "");
+            }}
+            placeholder="Marka seçin"
+            className="text-black dark:text-white"
+          />
 
-            <label className="text-sm text-slate-600 block mt-4">Seri / Model</label>
-            <Select
-              options={seriOptions}
-              value={formData.seri ? { value: formData.seri, label: formData.seri } : null}
-              onChange={(option) => updateField("seri", option.value)}
-              placeholder="Model seçin"
-              isDisabled={!formData.marka}
-            />
+          <label className="text-sm text-slate-600 dark:text-slate-400 block mt-4">Seri / Model</label>
+          <Select
+            options={seriOptions}
+            value={formData.seri ? { value: formData.seri, label: formData.seri } : null}
+            onChange={(option) => updateField("seri", option.value)}
+            placeholder="Model seçin"
+            isDisabled={!formData.marka}
+            className="text-black dark:text-white"
+          />
 
-            <div className="grid grid-cols-2 gap-3 mt-4">
-              <div>
-                <label className="text-sm text-slate-600 block">Model Yılı</label>
-                <input name="modelYili" value={formData.modelYili} onChange={(e) => updateField("modelYili", e.target.value)} className={inputClass} />
-              </div>
-              <div>
-                <label className="text-sm text-slate-600 block">Kilometre</label>
-                <input type="number" name="km" value={formData.km} onChange={(e) => updateField("km", e.target.value)} className={inputClass} />
-              </div>
+          <div className="grid grid-cols-2 gap-3 mt-4">
+            <div>
+              <label className="text-sm text-slate-600 dark:text-slate-400 block">Model Yılı</label>
+              <input
+                name="modelYili"
+                value={formData.modelYili}
+                onChange={(e) => updateField("modelYili", e.target.value)}
+                className="input"
+              />
             </div>
-          </>
-        )}
-
-        {/* Specs */}
-        {steps[stepIndex].id === "specs" && (
-          <div className="space-y-4">
-            <label className="text-sm text-slate-600 block">Vites</label>
-            <select name="vites" value={formData.vites} onChange={(e) => updateField("vites", e.target.value)} className={inputClass}>
-              <option value="">Seçin</option>
-              <option>Manuel</option>
-              <option>Otomatik</option>
-              <option>Yarı Otomatik</option>
-            </select>
-
-            <label className="text-sm text-slate-600 block">Yakıt</label>
-            <select name="yakıt" value={formData.yakıt} onChange={(e) => updateField("yakıt", e.target.value)} className={inputClass}>
-              <option value="">Seçin</option>
-              <option>Benzin</option>
-              <option>Dizel</option>
-              <option>LPG</option>
-              <option>Hybrid</option>
-              <option>Elektrik</option>
-            </select>
-
-            <label className="text-sm text-slate-600 block">Gövde Tipi</label>
-            <select name="bodyType" value={formData.bodyType} onChange={(e) => updateField("bodyType", e.target.value)} className={inputClass}>
-              <option value="">Seçin</option>
-              <option>SUV</option>
-              <option>Hatchback</option>
-              <option>Sedan</option>
-              <option>Station Wagon</option>
-            </select>
-          </div>
-        )}
-
-        {/* Expertiz - Interactive Car Diagram */}
-        {steps[stepIndex].id === "expertiz" && (
-          <div className="space-y-4">
-            <div className="text-center mb-4">
-              <h3 className="text-lg font-semibold text-slate-800 mb-1">Araç Ekspertiz Durumu</h3>
-              <p className="text-xs text-slate-500">Araç üzerindeki parçalara tıklayarak durumlarını belirtin</p>
-            </div>
-
-            <CarDiagram 
-              expertizData={formData.expertiz}
-              onPartClick={handlePartClick}
-              selectedPart={selectedPart}
-            />
-
-            {selectedPart && (
-              <div className="mt-6 p-4 bg-slate-50 rounded-lg border">
-                <p className="text-sm font-medium text-slate-700 mb-3">
-                  {partLabels[selectedPart]} - Durumu seçin:
-                </p>
-                <div className="flex gap-2 justify-center flex-wrap">
-                  {expertizOptions.map((opt) => (
-                    <button
-                      type="button"
-                      key={opt.value}
-                      onClick={() => handleExpertizSelect(opt.value)}
-                      className={`px-4 py-2 rounded-full border transition ${
-                        formData.expertiz[selectedPart] === opt.value
-                          ? "bg-indigo-600 text-white border-indigo-600"
-                          : "bg-white text-slate-700 border-slate-200 hover:shadow-sm"
-                      }`}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Tramer */}
-        {steps[stepIndex].id === "tramer" && (
-          <div className="space-y-4">
-            <label className="text-sm text-slate-600 block">Tramer Durumu</label>
-            <div className="flex gap-2 flex-wrap">
-              {tramerOptions.map((opt) => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => updateField("tramer.value", opt.value)}
-                  className={`px-3 py-2 rounded-md border transition ${
-                    formData.tramer.value === opt.value
-                      ? "bg-indigo-600 text-white border-indigo-600"
-                      : "bg-white text-slate-700 border-slate-200 hover:shadow-sm"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-
-            <label className="text-sm text-slate-600 block">Tramer Tutarı (TL)</label>
-            <input name="tramer.tutar" type="number" value={formData.tramer.tutar} onChange={(e) => updateField("tramer.tutar", e.target.value)} className={inputClass} />
-          </div>
-        )}
-
-        {/* Contact */}
-        {steps[stepIndex].id === "contact" && (
-          <div className="space-y-4">
-            <label className="text-sm text-slate-600 block">Ad Soyad</label>
-            <input name="adSoyad" value={formData.adSoyad} onChange={(e) => updateField("adSoyad", e.target.value)} className={inputClass} />
-
-            <label className="text-sm text-slate-600 block">Telefon</label>
-            <input name="telefon" value={formData.telefon} onChange={(e) => updateField("telefon", e.target.value)} className={inputClass} />
-
-            <label className="text-sm text-slate-600 block">E-posta (isteğe bağlı)</label>
-            <input name="eposta" type="email" value={formData.eposta} onChange={(e) => updateField("eposta", e.target.value)} className={inputClass} />
-          </div>
-        )}
-
-        {/* Review */}
-        {steps[stepIndex].id === "review" && (
-          <div className="space-y-3">
-            <h3 className="text-lg font-semibold text-slate-800">Özet</h3>
-            <div className="grid grid-cols-2 gap-3 text-sm text-slate-700">
-              <div className="p-3 bg-slate-50 rounded-md border">{formData.marka} {formData.seri}</div>
-              <div className="p-3 bg-slate-50 rounded-md border">Yıl: {formData.modelYili}</div>
-              <div className="p-3 bg-slate-50 rounded-md border">KM: {formData.km} km</div>
-              <div className="p-3 bg-slate-50 rounded-md border">Vites: {formData.vites}</div>
-              <div className="p-3 bg-slate-50 rounded-md border">Yakıt: {formData.yakıt}</div>
-              <div className="p-3 bg-slate-50 rounded-md border">Gövde: {formData.bodyType}</div>
-              <div className="p-3 bg-slate-50 rounded-md border">Tramer: {formData.tramer.value === "2" ? "Yok" : "Var"}</div>
-              <div className="p-3 bg-slate-50 rounded-md border">İsim: {formData.adSoyad}</div>
+            <div>
+              <label className="text-sm text-slate-600 dark:text-slate-400 block">Kilometre</label>
+              <input
+                type="number"
+                name="km"
+                value={formData.km}
+                onChange={(e) => updateField("km", e.target.value)}
+                className="input"
+              />
             </div>
           </div>
-        )}
-      </div>
+        </>
+      )}
+
+      {/* 2️⃣ Specs */}
+      {steps[stepIndex].id === "specs" && (
+        <div className="space-y-4">
+          <label className="text-sm text-slate-600 dark:text-slate-400 block">Vites</label>
+          <select
+            name="vites"
+            value={formData.vites}
+            onChange={(e) => updateField("vites", e.target.value)}
+            className="input"
+          >
+            <option value="">Seçin</option>
+            <option>Manuel</option>
+            <option>Otomatik</option>
+            <option>Yarı Otomatik</option>
+          </select>
+
+          <label className="text-sm text-slate-600 dark:text-slate-400 block">Yakıt</label>
+          <select
+            name="yakıt"
+            value={formData.yakıt}
+            onChange={(e) => updateField("yakıt", e.target.value)}
+            className="input"
+          >
+            <option value="">Seçin</option>
+            <option>Benzin</option>
+            <option>Dizel</option>
+            <option>LPG</option>
+            <option>Hybrid</option>
+            <option>Elektrik</option>
+          </select>
+        </div>
+      )}
+
+      {/* 3️⃣ Expertiz */}
+      {steps[stepIndex].id === "expertiz" && (
+        <div className="space-y-4">
+          <CarDiagram
+            expertizData={formData.expertiz}
+            onPartClick={setSelectedPart}
+            selectedPart={selectedPart}
+          />
+        </div>
+      )}
+
+      {/* 4️⃣ Tramer */}
+      {steps[stepIndex].id === "tramer" && (
+        <div className="space-y-4">
+          <label className="text-sm text-slate-600 dark:text-slate-400 block">Tramer Durumu</label>
+          <div className="flex gap-2 flex-wrap">
+            {tramerOptions.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => updateField("tramer.value", opt.value)}
+                className={`choice-btn ${
+                  formData.tramer.value === opt.value
+                    ? "bg-indigo-600 text-white border-indigo-600 shadow-md"
+                    : ""
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+
+          <label className="text-sm text-slate-600 dark:text-slate-400 block">
+            Tramer Tutarı (TL)
+          </label>
+          <input
+            name="tramer.tutar"
+            type="number"
+            value={formData.tramer.tutar}
+            onChange={(e) => updateField("tramer.tutar", e.target.value)}
+            className="input"
+          />
+        </div>
+      )}
+
+      {/* 5️⃣ Contact */}
+      {steps[stepIndex].id === "contact" && (
+        <div className="space-y-4">
+          <input
+            placeholder="Ad Soyad"
+            name="adSoyad"
+            value={formData.adSoyad}
+            onChange={(e) => updateField("adSoyad", e.target.value)}
+            className="input"
+          />
+          <input
+            placeholder="Telefon"
+            name="telefon"
+            value={formData.telefon}
+            onChange={(e) => updateField("telefon", e.target.value)}
+            className="input"
+          />
+          <input
+            placeholder="E-posta (isteğe bağlı)"
+            name="eposta"
+            type="email"
+            value={formData.eposta}
+            onChange={(e) => updateField("eposta", e.target.value)}
+            className="input"
+          />
+        </div>
+      )}
+
+      {/* 6️⃣ Review */}
+      {steps[stepIndex].id === "review" && (
+        <div className="space-y-3">
+          <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100">Özet</h3>
+          <div className="grid grid-cols-2 gap-3 text-sm text-slate-700 dark:text-slate-300">
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md border dark:border-slate-700">
+              {formData.marka} {formData.seri}
+            </div>
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md border dark:border-slate-700">
+              Yıl: {formData.modelYili}
+            </div>
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md border dark:border-slate-700">
+              KM: {formData.km} km
+            </div>
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md border dark:border-slate-700">
+              Vites: {formData.vites}
+           </div>
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md border dark:border-slate-700">
+              Yakıt: {formData.yakıt}
+            </div>
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md border dark:border-slate-700">
+              Gövde: {formData.bodyType}
+            </div>
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md border dark:border-slate-700">
+              Tramer: {formData.tramer.value === "2" ? "Yok" : "Var"}
+            </div>
+            <div className="p-3 bg-slate-50 dark:bg-slate-800 rounded-md border dark:border-slate-700">
+              İsim: {formData.adSoyad}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Navigation */}
-      <div className="flex items-center justify-between">
-        <button type="button" onClick={back} disabled={stepIndex === 0} className="px-4 py-2 rounded-md border text-sm bg-white hover:shadow-sm disabled:opacity-50">
+      <div className="flex items-center justify-between pt-4">
+        <button
+          type="button"
+          onClick={back}
+          disabled={stepIndex === 0}
+          className="btn-outline"
+        >
           Geri
         </button>
 
         {steps[stepIndex].id !== "review" ? (
-          <button type="button" onClick={next} className="px-4 py-2 rounded-md bg-indigo-600 text-white text-sm hover:opacity-90">
+          <button type="button" onClick={next} className="btn">
             Sonraki
           </button>
         ) : (
-          <button onClick={handleSubmit} disabled={loading} className="px-4 py-2 rounded-md bg-gradient-to-r from-indigo-600 to-blue-500 text-white text-sm hover:opacity-90 disabled:opacity-60">
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="btn disabled:opacity-60"
+          >
             {loading ? "Gönderiliyor..." : "Teklifleri Getir"}
           </button>
         )}
       </div>
-    </div>
+    </form>
   );
 }
