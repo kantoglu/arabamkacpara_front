@@ -37,32 +37,32 @@ export default function StepSpecs({ formData, updateField }) {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 text-white">
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-foreground mb-1">Teknik Özellikler</h2>
-        <p className="text-sm text-muted-foreground">Aracınızın teknik detaylarını belirtin.</p>
+        <h2 className="text-xl font-semibold text-white mb-1">Teknik Özellikler</h2>
+        <p className="text-sm text-white">Aracınızın teknik detaylarını belirtin.</p>
       </div>
 
       {/* Vites Tipi */}
       <div>
-        <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-3">
+        <label className="flex items-center gap-2 text-sm font-medium text-white mb-2">
           <Settings className="w-4 h-4" />
           Vites Tipi
         </label>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-2">
           {vitesOptions.map((option) => (
             <button
               key={option.value}
               type="button"
               onClick={() => updateField("vites", option.value)}
-              className={`choice-button flex flex-col items-center gap-2 py-4 ${
+              className={`choice-button text-sm flex flex-col items-center gap-1 px-3 py-2 rounded-md border ${
                 formData.vites === option.value ? "choice-button-active" : ""
               }`}
             >
-              <span className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-sm font-bold">
+              <span className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-sm font-bold">
                 {option.icon}
               </span>
-              <span className="text-sm">{option.label}</span>
+              <span className="text-sm text-white">{option.label}</span>
             </button>
           ))}
         </div>
@@ -70,7 +70,7 @@ export default function StepSpecs({ formData, updateField }) {
 
       {/* Yakıt Tipi */}
       <div>
-        <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-3">
+        <label className="flex items-center gap-2 text-sm font-medium text-white mb-2">
           <Fuel className="w-4 h-4" />
           Yakıt Tipi
         </label>
@@ -80,7 +80,9 @@ export default function StepSpecs({ formData, updateField }) {
               key={option.value}
               type="button"
               onClick={() => updateField("yakit", option.value)}
-              className={`choice-button px-5 py-2.5 ${formData.yakit === option.value ? "choice-button-active" : ""}`}
+              className={`choice-button text-sm px-4 py-2 ${
+                formData.yakit === option.value ? "choice-button-active" : ""
+              }`}
             >
               {option.label}
             </button>
@@ -90,7 +92,7 @@ export default function StepSpecs({ formData, updateField }) {
 
       {/* Kasa Tipi */}
       <div>
-        <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-3">
+        <label className="flex items-center gap-2 text-sm font-medium text-white mb-2">
           <Car className="w-4 h-4" />
           Kasa Tipi
         </label>
@@ -100,7 +102,7 @@ export default function StepSpecs({ formData, updateField }) {
               key={option.value}
               type="button"
               onClick={() => updateField("bodyType", option.value)}
-              className={`choice-button px-5 py-2.5 ${
+              className={`choice-button text-sm px-4 py-2 ${
                 formData.bodyType === option.value ? "choice-button-active" : ""
               }`}
             >
@@ -112,25 +114,25 @@ export default function StepSpecs({ formData, updateField }) {
 
       {/* Renk */}
       <div>
-        <label className="flex items-center gap-2 text-sm font-medium text-foreground mb-3">
+        <label className="flex items-center gap-2 text-sm font-medium text-white mb-2">
           <Palette className="w-4 h-4" />
           Renk
         </label>
-        <div className="flex flex-wrap gap-3">
+        <div className="flex flex-wrap gap-2">
           {renkOptions.map((option) => (
             <button
               key={option.value}
               type="button"
               onClick={() => updateField("renk", option.value)}
-              className={`flex items-center gap-2 choice-button px-4 py-2.5 ${
+              className={`choice-button text-sm flex items-center gap-2 px-4 py-2 ${
                 formData.renk === option.value ? "choice-button-active" : ""
               }`}
             >
               <span
-                className="w-5 h-5 rounded-full border-2 border-border"
+                className="w-4 h-4 rounded-full border-2 border-border"
                 style={{ backgroundColor: option.color }}
               />
-              <span className="text-sm">{option.label}</span>
+              <span>{option.label}</span>
             </button>
           ))}
         </div>

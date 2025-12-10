@@ -1,15 +1,10 @@
+import axios from "axios";
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 export const createCarRequest = async (formData) => {
-  const response = await fetch("/api/car-request/create", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formData),
-  });
+  const response = await axios.post(`${BASE_URL}/carRequest/create`, formData);
 
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(errorText || "Sunucu hatası");
-  }
-
-  const json = await response.json();
-  return json.offers || [];
+  // 👇 Burada doğru parse işlemi yapılmalı
+  return response.data?.data?.offers || [];
 };

@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight, Send, Loader2 } from "lucide-react";
+
 import StepIndicator from "./steps/StepIndicator";
 import StepBasicInfo from "./steps/StepBasicInfo";
 import StepSpecs from "./steps/StepSpecs";
@@ -7,7 +9,8 @@ import StepExpertiz from "./steps/StepExpertiz";
 import StepTramer from "./steps/StepTramer";
 import StepContact from "./steps/StepContact";
 import StepReview from "./steps/StepReview";
-import { ChevronLeft, ChevronRight, Send, Loader2 } from "lucide-react";
+
+import { createCarRequest } from "../services/carRequestApi";
 
 const steps = [
   { id: "basic", label: "Araç Bilgisi", icon: "car" },
@@ -49,10 +52,11 @@ const initialFormData = {
   plaka: "",
 };
 
-export default function CarFormWizard({ onSubmit, loading }) {
+export default function CarFormWizard({ onSuccess, setLoading }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState(initialFormData);
   const [direction, setDirection] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
 
   const updateField = (name, value) => {
     if (name.includes(".")) {
@@ -85,11 +89,20 @@ export default function CarFormWizard({ onSubmit, loading }) {
     setCurrentStep(index);
   };
 
-  const handleSubmit = () => {
-    onSubmit(formData);
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    setLoading(true);
+    try {
+      const offers = await createCarRequest(formData);
+      onSuccess(offers);
+    } catch (err) {
+      console.error("Teklif alma hatası:", err);
+      alert("Teklif alınırken bir hata oluştu.");
+    } finally {
+      setSubmitting(false);
+      setLoading(false);
+    }
   };
-
-  const progress = ((currentStep + 1) / steps.length) * 100;
 
   const renderStep = () => {
     switch (steps[currentStep].id) {
@@ -110,9 +123,10 @@ export default function CarFormWizard({ onSubmit, loading }) {
     }
   };
 
+  const progress = ((currentStep + 1) / steps.length) * 100;
+
   return (
     <div className="glass-card overflow-hidden">
-      {/* Progress Bar */}
       <div className="h-1.5 bg-muted">
         <motion.div
           className="h-full bg-gradient-to-r from-primary to-primary-400"
@@ -122,12 +136,10 @@ export default function CarFormWizard({ onSubmit, loading }) {
         />
       </div>
 
-      {/* Step Indicators */}
       <div className="px-6 py-6 border-b border-border/60">
         <StepIndicator steps={steps} currentStep={currentStep} onStepClick={goToStep} />
       </div>
 
-      {/* Form Content */}
       <div className="p-6 md:p-8 min-h-[400px]">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
@@ -143,7 +155,6 @@ export default function CarFormWizard({ onSubmit, loading }) {
         </AnimatePresence>
       </div>
 
-      {/* Navigation */}
       <div className="px-6 md:px-8 py-5 bg-muted/50 border-t border-border/60">
         <div className="flex items-center justify-between">
           <button
@@ -169,10 +180,10 @@ export default function CarFormWizard({ onSubmit, loading }) {
             <button
               type="button"
               onClick={handleSubmit}
-              disabled={loading}
+              disabled={submitting}
               className="btn-primary flex items-center gap-2"
             >
-              {loading ? (
+              {submitting ? (
                 <>
                   <Loader2 className="w-5 h-5 animate-spin" />
                   <span>Gönderiliyor...</span>

@@ -22,14 +22,14 @@ export default function StepReview({ formData, goToStep }) {
   return (
     <div className="space-y-6">
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-foreground mb-1">Bilgileri Kontrol Edin</h2>
+        <h2 className="text-xl font-semibold text-white mb-1">Bilgileri Kontrol Edin</h2>
         <p className="text-sm text-muted-foreground">Gönderim öncesi bilgilerinizi gözden geçirin.</p>
       </div>
 
       {/* Araç Bilgileri */}
-      <div className="p-5 rounded-xl bg-muted/50 border border-border">
+     <div className="p-5 rounded-xl bg-muted/50 border border-border">
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2 text-foreground font-semibold">
+          <div className="flex items-center gap-2 text-white font-semibold">
             <Car className="w-5 h-5 text-primary" />
             Araç Bilgileri
           </div>
@@ -65,7 +65,7 @@ export default function StepReview({ formData, goToStep }) {
       {/* Teknik Özellikler */}
       <div className="p-5 rounded-xl bg-muted/50 border border-border">
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2 text-foreground font-semibold">
+          <div className="flex items-center gap-2 text-white font-semibold">
             <Settings className="w-5 h-5 text-primary" />
             Teknik Özellikler
           </div>
@@ -107,7 +107,7 @@ export default function StepReview({ formData, goToStep }) {
         {/* Ekspertiz */}
         <div className="p-5 rounded-xl bg-muted/50 border border-border">
           <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2 text-foreground font-semibold text-sm">
+            <div className="flex items-center gap-2 text-white font-semibold text-sm">
               <ClipboardCheck className="w-4 h-4 text-primary" />
               Ekspertiz
             </div>
@@ -127,7 +127,7 @@ export default function StepReview({ formData, goToStep }) {
         {/* Tramer */}
         <div className="p-5 rounded-xl bg-muted/50 border border-border">
           <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2 text-foreground font-semibold text-sm">
+            <div className="flex items-center gap-2 text-white font-semibold text-sm">
               <Shield className="w-4 h-4 text-primary" />
               Tramer
             </div>
@@ -153,7 +153,7 @@ export default function StepReview({ formData, goToStep }) {
       {/* İletişim Bilgileri */}
       <div className="p-5 rounded-xl bg-muted/50 border border-border">
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2 text-foreground font-semibold">
+          <div className="flex items-center gap-2 text-white font-semibold">
             <User className="w-5 h-5 text-primary" />
             İletişim Bilgileri
           </div>
@@ -169,16 +169,16 @@ export default function StepReview({ formData, goToStep }) {
         <div className="space-y-2 text-sm">
           <p>
             <span className="text-muted-foreground">Ad Soyad:</span>{" "}
-            <span className="text-foreground font-medium">{formData.adSoyad || "-"}</span>
+            <span className="text-white font-medium">{formData.adSoyad || "-"}</span>
           </p>
           <p>
             <span className="text-muted-foreground">Telefon:</span>{" "}
-            <span className="text-foreground font-medium">+90 {formData.telefon || "-"}</span>
+            <span className="text-white font-medium">+90 {formData.telefon || "-"}</span>
           </p>
           {formData.eposta && (
             <p>
               <span className="text-muted-foreground">E-posta:</span>{" "}
-              <span className="text-foreground font-medium">{formData.eposta}</span>
+              <span className="text-white font-medium">{formData.eposta}</span>
             </p>
           )}
         </div>

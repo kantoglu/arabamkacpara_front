@@ -20,7 +20,7 @@ export default function StepTramer({ formData, updateField }) {
       value: "3",
       label: "Bilmiyorum",
       icon: HelpCircle,
-      color: "text-muted-foreground",
+      color: "text-white",
       bg: "bg-muted/50 border-border",
     },
     {
@@ -35,10 +35,10 @@ export default function StepTramer({ formData, updateField }) {
   const selectedOption = tramerOptions.find((o) => o.value === formData.tramer.value);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 text-white">
       <div className="mb-6">
-        <h2 className="text-xl font-semibold text-foreground mb-1">Tramer Kaydı</h2>
-        <p className="text-sm text-muted-foreground">Aracınızın tramer (hasar) kaydı durumunu belirtin.</p>
+        <h2 className="text-xl font-semibold mb-1">Tramer Kaydı</h2>
+        <p className="text-sm text-white/70">Aracınızın tramer (hasar) kaydı durumunu belirtin.</p>
       </div>
 
       {/* Tramer Seçenekleri */}
@@ -59,7 +59,7 @@ export default function StepTramer({ formData, updateField }) {
               }`}
             >
               <Icon className={`w-8 h-8 ${option.color} mb-3`} />
-              <span className={`font-semibold block ${isSelected ? option.color : "text-foreground"}`}>
+              <span className={`font-semibold block ${isSelected ? option.color : "text-white"}`}>
                 {option.label}
               </span>
             </button>
@@ -82,7 +82,7 @@ export default function StepTramer({ formData, updateField }) {
               placeholder="örn: 25000"
               value={formData.tramer.tutar}
               onChange={(e) => updateField("tramer.tutar", e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-amber-300 dark:border-amber-700 bg-white dark:bg-card text-foreground outline-none focus:ring-2 focus:ring-amber-500/50"
+              className="w-full pl-10 pr-4 py-3 rounded-xl border border-amber-300 dark:border-amber-700 bg-white dark:bg-card text-white outline-none focus:ring-2 focus:ring-amber-500/50"
             />
           </div>
           <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">TRAMER sisteminden öğrenebilirsiniz.</p>
@@ -91,8 +91,8 @@ export default function StepTramer({ formData, updateField }) {
 
       {/* Bilgilendirme Kutusu */}
       <div className="p-4 rounded-xl bg-muted/50 border border-border">
-        <h4 className="font-medium text-foreground mb-2">Tramer Nedir?</h4>
-        <p className="text-sm text-muted-foreground">
+        <h4 className="font-medium text-white mb-2">Tramer Nedir?</h4>
+        <p className="text-sm text-white/70">
           TRAMER (Trafik Sigortaları Bilgi ve Gözetim Merkezi), araçların sigorta şirketlerine bildirilen hasar
           kayıtlarını tutan sistemdir. Bu kayıtlar aracın geçmişi hakkında önemli bilgiler içerir.
         </p>
