@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { Info } from "lucide-react";
+import { Info, Check } from "lucide-react";
 
 export default function StepExpertiz({ formData, updateField }) {
   const [hoveredPart, setHoveredPart] = useState(null);
 
   const expertizOptions = [
-    { value: "1", label: "Orijinal", color: "#10b981", className: "orginal" },
-    { value: "2", label: "Boyalı", color: "#f59e0b", className: "painted" },
-    { value: "3", label: "Değişmiş", color: "#ef4444", className: "changed" },
+    { value: "1", label: "Orijinal", color: "#10b981" },
+    { value: "2", label: "Boyalı", color: "#f59e0b" },
+    { value: "3", label: "Değişmiş", color: "#ef4444" },
   ];
 
   const carParts = [
@@ -26,9 +26,11 @@ export default function StepExpertiz({ formData, updateField }) {
     { key: "SagArkaCamurluk", label: "Sağ arka çamurluk", svgId: "path-item1" },
   ];
 
+  const getPartValue = (key) => formData.expertiz?.[key] || "1";
+
   const getPartStatus = (key) => {
-    const value = formData.expertiz?.[key] || "1";
-    return expertizOptions.find((o) => o.value === value);
+    const value = getPartValue(key);
+    return expertizOptions.find((o) => o.value === value) || expertizOptions[0];
   };
 
   const updateExpertiz = (key, value) => {
@@ -51,23 +53,51 @@ export default function StepExpertiz({ formData, updateField }) {
     return "#D3D2D2";
   };
 
+  const cycleValue = (current) => (current === "1" ? "2" : current === "2" ? "3" : "1");
+
+  const SelectCell = ({ partKey, value }) => {
+    const active = getPartValue(partKey) === value;
+    const opt = expertizOptions.find((o) => o.value === value);
+    return (
+      <button
+        type="button"
+        onClick={() => updateExpertiz(partKey, value)}
+        className="
+          w-10 h-7 rounded-md border
+          inline-flex items-center justify-center
+          transition-all
+          active:scale-[0.98]
+        "
+        style={{
+          borderColor: active ? opt.color : "#334155",
+          backgroundColor: active ? `${opt.color}22` : "transparent",
+        }}
+        aria-label={`${partKey}-${value}`}
+      >
+        {active ? <Check size={14} style={{ color: opt.color }} /> : null}
+      </button>
+    );
+  };
+
   return (
     <div className="space-y-4">
       {/* Header */}
       <div>
         <h2 className="text-xl font-semibold text-white mb-1">Ekspertiz Durumu</h2>
-        <p className="text-sm text-slate-400">Krokiden veya listeden parça durumlarını belirleyin</p>
-      </div>
-
-      {/* Info Box - Compact */}
-      <div className="flex items-start gap-2 p-3 rounded-lg bg-slate-900 border border-slate-700">
-        <Info className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
-        <p className="text-xs text-blue-300">
-          Araç krokisi üzerindeki parçalara tıklayarak veya listeden seçim yaparak durumu belirleyebilirsiniz.
+        <p className="text-sm text-slate-400">
+          Krokiden veya listeden parça durumlarını belirleyin
         </p>
       </div>
 
-      {/* Legend - Compact */}
+      {/* Info */}
+      <div className="flex items-start gap-2 p-3 rounded-lg bg-slate-900 border border-slate-700">
+        <Info className="w-4 h-4 text-blue-400 flex-shrink-0 mt-0.5" />
+        <p className="text-xs text-blue-300">
+          Krokide parçaya tıklayın (Orijinal → Boyalı → Değişmiş). Sağdaki tablodan da seçebilirsiniz.
+        </p>
+      </div>
+
+      {/* Legend */}
       <div className="flex items-center justify-center gap-4 py-2 bg-slate-800 rounded-lg">
         {expertizOptions.map((option) => (
           <div key={option.value} className="flex items-center gap-1.5">
@@ -77,9 +107,9 @@ export default function StepExpertiz({ formData, updateField }) {
         ))}
       </div>
 
-      {/* Main Content - Side by Side */}
-      <div className="grid lg:grid-cols-2 gap-4 items-start">
-        {/* Left: SVG Car Diagram */}
+      {/* Main */}
+      <div className="grid lg:grid-cols-2 gap-4 items-stretch">
+        {/* Left: Kroki (AYNEN) */}
         <div className="bg-slate-900 rounded-lg p-4 border border-slate-700">
           <h3 className="text-sm font-semibold text-white mb-3">Araç Krokisi</h3>
 
@@ -111,11 +141,7 @@ export default function StepExpertiz({ formData, updateField }) {
                       fillRule="nonzero"
                       transform="translate(112.000000, 16.000000) rotate(-90.000000) translate(-112.000000, -16.000000)"
                       className="cursor-pointer transition-all hover:opacity-80"
-                      onClick={() => {
-                        const current = formData.expertiz?.OnTampon || "1";
-                        const next = current === "1" ? "2" : current === "2" ? "3" : "1";
-                        updateExpertiz("OnTampon", next);
-                      }}
+                      onClick={() => updateExpertiz("OnTampon", cycleValue(getPartValue("OnTampon")))}
                       onMouseEnter={() => setHoveredPart("OnTampon")}
                       onMouseLeave={() => setHoveredPart(null)}
                     />
@@ -129,11 +155,9 @@ export default function StepExpertiz({ formData, updateField }) {
                       fillRule="nonzero"
                       transform="translate(112.000000, 88.500000) rotate(-90.000000) translate(-112.000000, -88.500000)"
                       className="cursor-pointer transition-all hover:opacity-80"
-                      onClick={() => {
-                        const current = formData.expertiz?.MotorKaputu || "1";
-                        const next = current === "1" ? "2" : current === "2" ? "3" : "1";
-                        updateExpertiz("MotorKaputu", next);
-                      }}
+                      onClick={() =>
+                        updateExpertiz("MotorKaputu", cycleValue(getPartValue("MotorKaputu")))
+                      }
                       onMouseEnter={() => setHoveredPart("MotorKaputu")}
                       onMouseLeave={() => setHoveredPart(null)}
                     />
@@ -147,29 +171,23 @@ export default function StepExpertiz({ formData, updateField }) {
                       fillRule="nonzero"
                       transform="translate(111.500000, 175.500000) rotate(-90.000000) translate(-111.500000, -175.500000)"
                       className="cursor-pointer transition-all hover:opacity-80"
-                      onClick={() => {
-                        const current = formData.expertiz?.Tavan || "1";
-                        const next = current === "1" ? "2" : current === "2" ? "3" : "1";
-                        updateExpertiz("Tavan", next);
-                      }}
+                      onClick={() => updateExpertiz("Tavan", cycleValue(getPartValue("Tavan")))}
                       onMouseEnter={() => setHoveredPart("Tavan")}
                       onMouseLeave={() => setHoveredPart(null)}
                     />
 
                     {/* Arka Kaput */}
                     <path
-                      d="M126,205.023942 L106.684058,205.023942 C106.684058,205.023942 98,204.012393 98,215.139427 C98,226.26646 98,266.161932 98,266.161932 C98,266.161932 99.3797101,273 104.857971,273 C110.336232,273 126,273 126,273 C126,273 C119.101449,243.665094 126,205.023942 Z"
+                      d="M126,205.023942 L106.684058,205.023942 C106.684058,205.023942 98,204.012393 98,215.139427 C98,226.26646 98,266.161932 98,266.161932 C98,266.161932 99.3797101,273 104.857971,273 C110.336232,273 126,273 126,273 C126,273 119.101449,243.665094 126,205.023942 Z"
                       stroke={getPartStroke("ArkaKaput")}
                       strokeWidth="2"
                       fill={getPartFill("ArkaKaput")}
                       fillRule="nonzero"
                       transform="translate(112.000000, 239.000000) rotate(-90.000000) translate(-112.000000, -239.000000)"
                       className="cursor-pointer transition-all hover:opacity-80"
-                      onClick={() => {
-                        const current = formData.expertiz?.ArkaKaput || "1";
-                        const next = current === "1" ? "2" : current === "2" ? "3" : "1";
-                        updateExpertiz("ArkaKaput", next);
-                      }}
+                      onClick={() =>
+                        updateExpertiz("ArkaKaput", cycleValue(getPartValue("ArkaKaput")))
+                      }
                       onMouseEnter={() => setHoveredPart("ArkaKaput")}
                       onMouseLeave={() => setHoveredPart(null)}
                     />
@@ -183,11 +201,9 @@ export default function StepExpertiz({ formData, updateField }) {
                       fillRule="nonzero"
                       transform="translate(112.000000, 286.000000) rotate(-90.000000) translate(-112.000000, -286.000000)"
                       className="cursor-pointer transition-all hover:opacity-80"
-                      onClick={() => {
-                        const current = formData.expertiz?.ArkaTampon || "1";
-                        const next = current === "1" ? "2" : current === "2" ? "3" : "1";
-                        updateExpertiz("ArkaTampon", next);
-                      }}
+                      onClick={() =>
+                        updateExpertiz("ArkaTampon", cycleValue(getPartValue("ArkaTampon")))
+                      }
                       onMouseEnter={() => setHoveredPart("ArkaTampon")}
                       onMouseLeave={() => setHoveredPart(null)}
                     />
@@ -202,11 +218,9 @@ export default function StepExpertiz({ formData, updateField }) {
                         fillRule="nonzero"
                         transform="translate(29.500000, 141.000000) rotate(-90.000000) translate(-29.500000, -141.000000)"
                         className="cursor-pointer transition-all hover:opacity-80"
-                        onClick={() => {
-                          const current = formData.expertiz?.SagArkaKapi || "1";
-                          const next = current === "1" ? "2" : current === "2" ? "3" : "1";
-                          updateExpertiz("SagArkaKapi", next);
-                        }}
+                        onClick={() =>
+                          updateExpertiz("SagArkaKapi", cycleValue(getPartValue("SagArkaKapi")))
+                        }
                         onMouseEnter={() => setHoveredPart("SagArkaKapi")}
                         onMouseLeave={() => setHoveredPart(null)}
                       />
@@ -218,11 +232,9 @@ export default function StepExpertiz({ formData, updateField }) {
                         fillRule="nonzero"
                         transform="translate(29.000000, 93.000000) rotate(-90.000000) translate(-29.000000, -93.000000)"
                         className="cursor-pointer transition-all hover:opacity-80"
-                        onClick={() => {
-                          const current = formData.expertiz?.SagOnKapi || "1";
-                          const next = current === "1" ? "2" : current === "2" ? "3" : "1";
-                          updateExpertiz("SagOnKapi", next);
-                        }}
+                        onClick={() =>
+                          updateExpertiz("SagOnKapi", cycleValue(getPartValue("SagOnKapi")))
+                        }
                         onMouseEnter={() => setHoveredPart("SagOnKapi")}
                         onMouseLeave={() => setHoveredPart(null)}
                       />
@@ -234,11 +246,12 @@ export default function StepExpertiz({ formData, updateField }) {
                         fillRule="nonzero"
                         transform="translate(34.500000, 182.500000) rotate(-90.000000) translate(-34.500000, -182.500000)"
                         className="cursor-pointer transition-all hover:opacity-80"
-                        onClick={() => {
-                          const current = formData.expertiz?.SagArkaCamurluk || "1";
-                          const next = current === "1" ? "2" : current === "2" ? "3" : "1";
-                          updateExpertiz("SagArkaCamurluk", next);
-                        }}
+                        onClick={() =>
+                          updateExpertiz(
+                            "SagArkaCamurluk",
+                            cycleValue(getPartValue("SagArkaCamurluk"))
+                          )
+                        }
                         onMouseEnter={() => setHoveredPart("SagArkaCamurluk")}
                         onMouseLeave={() => setHoveredPart(null)}
                       />
@@ -250,11 +263,12 @@ export default function StepExpertiz({ formData, updateField }) {
                         fillRule="nonzero"
                         transform="translate(41.500000, 34.500000) scale(-1, 1) rotate(-90.000000) translate(-41.500000, -34.500000)"
                         className="cursor-pointer transition-all hover:opacity-80"
-                        onClick={() => {
-                          const current = formData.expertiz?.SagOnCamurluk || "1";
-                          const next = current === "1" ? "2" : current === "2" ? "3" : "1";
-                          updateExpertiz("SagOnCamurluk", next);
-                        }}
+                        onClick={() =>
+                          updateExpertiz(
+                            "SagOnCamurluk",
+                            cycleValue(getPartValue("SagOnCamurluk"))
+                          )
+                        }
                         onMouseEnter={() => setHoveredPart("SagOnCamurluk")}
                         onMouseLeave={() => setHoveredPart(null)}
                       />
@@ -273,11 +287,9 @@ export default function StepExpertiz({ formData, updateField }) {
                         fillRule="nonzero"
                         transform="translate(29.500000, 141.000000) rotate(-90.000000) translate(-29.500000, -141.000000)"
                         className="cursor-pointer transition-all hover:opacity-80"
-                        onClick={() => {
-                          const current = formData.expertiz?.SolArkaKapi || "1";
-                          const next = current === "1" ? "2" : current === "2" ? "3" : "1";
-                          updateExpertiz("SolArkaKapi", next);
-                        }}
+                        onClick={() =>
+                          updateExpertiz("SolArkaKapi", cycleValue(getPartValue("SolArkaKapi")))
+                        }
                         onMouseEnter={() => setHoveredPart("SolArkaKapi")}
                         onMouseLeave={() => setHoveredPart(null)}
                       />
@@ -289,11 +301,9 @@ export default function StepExpertiz({ formData, updateField }) {
                         fillRule="nonzero"
                         transform="translate(29.000000, 93.000000) rotate(-90.000000) translate(-29.000000, -93.000000)"
                         className="cursor-pointer transition-all hover:opacity-80"
-                        onClick={() => {
-                          const current = formData.expertiz?.SolOnKapi || "1";
-                          const next = current === "1" ? "2" : current === "2" ? "3" : "1";
-                          updateExpertiz("SolOnKapi", next);
-                        }}
+                        onClick={() =>
+                          updateExpertiz("SolOnKapi", cycleValue(getPartValue("SolOnKapi")))
+                        }
                         onMouseEnter={() => setHoveredPart("SolOnKapi")}
                         onMouseLeave={() => setHoveredPart(null)}
                       />
@@ -305,11 +315,12 @@ export default function StepExpertiz({ formData, updateField }) {
                         fillRule="nonzero"
                         transform="translate(34.500000, 182.500000) rotate(-90.000000) translate(-34.500000, -182.500000)"
                         className="cursor-pointer transition-all hover:opacity-80"
-                        onClick={() => {
-                          const current = formData.expertiz?.SolArkaCamurluk || "1";
-                          const next = current === "1" ? "2" : current === "2" ? "3" : "1";
-                          updateExpertiz("SolArkaCamurluk", next);
-                        }}
+                        onClick={() =>
+                          updateExpertiz(
+                            "SolArkaCamurluk",
+                            cycleValue(getPartValue("SolArkaCamurluk"))
+                          )
+                        }
                         onMouseEnter={() => setHoveredPart("SolArkaCamurluk")}
                         onMouseLeave={() => setHoveredPart(null)}
                       />
@@ -321,11 +332,12 @@ export default function StepExpertiz({ formData, updateField }) {
                         fillRule="nonzero"
                         transform="translate(41.500000, 34.500000) scale(-1, 1) rotate(-90.000000) translate(-41.500000, -34.500000)"
                         className="cursor-pointer transition-all hover:opacity-80"
-                        onClick={() => {
-                          const current = formData.expertiz?.SolOnCamurluk || "1";
-                          const next = current === "1" ? "2" : current === "2" ? "3" : "1";
-                          updateExpertiz("SolOnCamurluk", next);
-                        }}
+                        onClick={() =>
+                          updateExpertiz(
+                            "SolOnCamurluk",
+                            cycleValue(getPartValue("SolOnCamurluk"))
+                          )
+                        }
                         onMouseEnter={() => setHoveredPart("SolOnCamurluk")}
                         onMouseLeave={() => setHoveredPart(null)}
                       />
@@ -335,37 +347,26 @@ export default function StepExpertiz({ formData, updateField }) {
               </g>
             </svg>
 
-            {/* Fixed-height hover info (prevents layout shift / kayma) */}
-            <div
-              className={`mt-3 p-2 bg-slate-800 rounded border-2 text-center transition-opacity ${
-                hoveredPart ? "opacity-100" : "opacity-0"
-              }`}
-              style={{
-                borderColor: hoveredPart ? getPartStatus(hoveredPart)?.color : "#334155",
-                minHeight: "44px",
-              }}
-            >
-              <span className="text-sm font-semibold text-white capitalize">
-                {hoveredPart ? carParts.find((p) => p.key === hoveredPart)?.label : " "}
-              </span>
-              <span className="text-xs mx-2">{hoveredPart ? "•" : " "}</span>
-              <span
-                className="text-sm font-bold"
-                style={{ color: hoveredPart ? getPartStatus(hoveredPart)?.color : "transparent" }}
+            {hoveredPart && (
+              <div
+                className="mt-3 p-2 bg-slate-800 rounded border text-center"
+                style={{ borderColor: `${getPartStatus(hoveredPart).color}55` }}
               >
-                {hoveredPart ? getPartStatus(hoveredPart)?.label : " "}
-              </span>
-            </div>
+                <span className="text-sm font-semibold text-white">
+                  {carParts.find((p) => p.key === hoveredPart)?.label}
+                </span>
+                <span className="text-xs mx-2 text-slate-400">•</span>
+                <span className="text-sm font-bold" style={{ color: getPartStatus(hoveredPart).color }}>
+                  {getPartStatus(hoveredPart).label}
+                </span>
+              </div>
+            )}
           </div>
 
-          {/* Stats - Compact */}
+          {/* Stats */}
           <div className="grid grid-cols-3 gap-2 mt-3">
             {expertizOptions.map((option) => {
-              const count = carParts.filter((part) => {
-                const value = formData.expertiz?.[part.key] || "1";
-                return value === option.value;
-              }).length;
-
+              const count = carParts.filter((part) => getPartValue(part.key) === option.value).length;
               return (
                 <div key={option.value} className="text-center p-2 bg-slate-800 rounded">
                   <div className="text-2xl font-bold" style={{ color: option.color }}>
@@ -378,112 +379,63 @@ export default function StepExpertiz({ formData, updateField }) {
           </div>
         </div>
 
-        {/* Right: Compact list that fits kroki height (NO SCROLL) */}
-        <div className="bg-slate-900 rounded-lg border border-slate-700 overflow-hidden">
-          {/* Header (tiny) */}
-          <div className="px-2.5 py-2 bg-slate-800/70 border-b border-slate-700">
-            <div className="flex items-center justify-between">
-              <h3 className="text-xs font-semibold text-white">Parça Durumları</h3>
-              <span className="text-[10px] text-slate-400">Tıkla seç</span>
+        {/* Right: Table like arabam.com (NO SCROLL) */}
+        <div className="bg-slate-900 rounded-lg border border-slate-700 overflow-hidden flex flex-col">
+          <div className="px-3 py-2 bg-slate-800 border-b border-slate-700">
+            <div className="grid grid-cols-[1fr_40px_40px_40px] items-center gap-2">
+              <div className="text-xs font-semibold text-white">Parça</div>
+              <div className="text-[10px] text-slate-300 text-center">Ori</div>
+              <div className="text-[10px] text-slate-300 text-center">Boy</div>
+              <div className="text-[10px] text-slate-300 text-center">Değ</div>
             </div>
           </div>
 
-          {/* Content */}
-          <div className="p-2">
-            {/* 2 columns on lg to fit height */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-1.5">
-              {carParts.map((part) => {
-                const currentValue = formData.expertiz?.[part.key] || "1";
+          <div className="p-2 space-y-1">
+            {carParts.map((part) => {
+              const status = getPartStatus(part.key);
 
-                const pillBase =
-                  "h-7 rounded-md border text-[10px] font-semibold " +
-                  "transition-all duration-150 flex items-center justify-center gap-1 " +
-                  "active:scale-[0.98]";
-
-                const pillStyle = (val) => {
-                  const opt = expertizOptions.find((o) => o.value === val);
-                  const active = currentValue === val;
-
-                  return {
-                    backgroundColor: active ? opt.color : "transparent",
-                    borderColor: active ? opt.color : "#334155",
-                    color: active ? "#0b1220" : "#94a3b8",
-                  };
-                };
-
-                const dotStyle = (val) => {
-                  const opt = expertizOptions.find((o) => o.value === val);
-                  return { backgroundColor: opt.color };
-                };
-
-                return (
-                  <div
-                    key={part.key}
-                    className="rounded-md border border-slate-800 bg-slate-900 px-2 py-1.5 hover:bg-slate-800/40 hover:border-slate-700 transition-colors"
-                    onMouseEnter={() => setHoveredPart(part.key)}
-                    onMouseLeave={() => setHoveredPart(null)}
-                  >
-                    {/* Title (tiny) */}
-                    <div className="text-[11px] font-medium text-white truncate mb-1">{part.label}</div>
-
-                    {/* Mini segmented */}
-                    <div className="flex items-center gap-1">
-                      <button
-                        type="button"
-                        onClick={() => updateExpertiz(part.key, "1")}
-                        className={`${pillBase} flex-1`}
-                        style={pillStyle("1")}
-                        aria-label={`${part.label} - Orijinal`}
-                      >
-                        <span className="w-2 h-2 rounded-full" style={dotStyle("1")} />
-                        O
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => updateExpertiz(part.key, "2")}
-                        className={`${pillBase} flex-1`}
-                        style={pillStyle("2")}
-                        aria-label={`${part.label} - Boyalı`}
-                      >
-                        <span className="w-2 h-2 rounded-full" style={dotStyle("2")} />
-                        B
-                      </button>
-
-                      <button
-                        type="button"
-                        onClick={() => updateExpertiz(part.key, "3")}
-                        className={`${pillBase} flex-1`}
-                        style={pillStyle("3")}
-                        aria-label={`${part.label} - Değişmiş`}
-                      >
-                        <span className="w-2 h-2 rounded-full" style={dotStyle("3")} />
-                        D
-                      </button>
+              return (
+                <div
+                  key={part.key}
+                  className="rounded-md border border-slate-800 hover:border-slate-700 hover:bg-slate-800/40 transition-colors"
+                  onMouseEnter={() => setHoveredPart(part.key)}
+                  onMouseLeave={() => setHoveredPart(null)}
+                >
+                  <div className="grid grid-cols-[1fr_40px_40px_40px] items-center gap-2 px-2 py-1.5">
+                    <div className="min-w-0">
+                      <div className="text-[12px] font-medium text-white truncate">
+                        {part.label}
+                      </div>
+                      <div className="text-[10px]" style={{ color: status.color }}>
+                        {status.label}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
 
-            {/* Ultra tiny legend */}
-            <div className="mt-2 flex items-center justify-between text-[10px] text-slate-400">
-              <div className="flex items-center gap-2">
-                <span className="inline-flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: expertizOptions[0].color }} />
-                  O: Orijinal
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: expertizOptions[1].color }} />
-                  B: Boyalı
-                </span>
-                <span className="inline-flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: expertizOptions[2].color }} />
-                  D: Değişmiş
-                </span>
-              </div>
-              <span>{carParts.length} parça</span>
-            </div>
+                    <SelectCell partKey={part.key} value="1" />
+                    <SelectCell partKey={part.key} value="2" />
+                    <SelectCell partKey={part.key} value="3" />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-auto px-3 py-2 border-t border-slate-800 text-[10px] text-slate-400 flex items-center justify-between">
+            <span>Toplam: {carParts.length} parça</span>
+            <span className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: expertizOptions[0].color }} />
+                Orijinal
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: expertizOptions[1].color }} />
+                Boyalı
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <span className="w-2 h-2 rounded-full" style={{ backgroundColor: expertizOptions[2].color }} />
+                Değişmiş
+              </span>
+            </span>
           </div>
         </div>
       </div>
