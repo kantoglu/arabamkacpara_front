@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, ChevronRight, Send, Loader2 } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Send,
+  Loader2,
+} from "lucide-react";
 
 import StepIndicator from "./steps/StepIndicator";
 import StepBasicInfo from "./steps/StepBasicInfo";
@@ -9,17 +14,22 @@ import StepExpertiz from "./steps/StepExpertiz";
 import StepTramer from "./steps/StepTramer";
 import StepContact from "./steps/StepContact";
 import StepReview from "./steps/StepReview";
+import MarkaDropdown from "./steps/BrandDropdown";
 
 import { createCarRequest } from "../services/carRequestApi";
 
+/* ---------------- STEPS ---------------- */
+
 const steps = [
-  { id: "basic", label: "Araç Bilgisi", icon: "car" },
-  { id: "specs", label: "Teknik", icon: "settings" },
-  { id: "expertiz", label: "Ekspertiz", icon: "clipboard" },
-  { id: "tramer", label: "Tramer", icon: "shield" },
-  { id: "contact", label: "İletişim", icon: "user" },
-  { id: "review", label: "Özet", icon: "check" },
+  { id: "basic", label: "Araç Bilgisi" },
+  { id: "specs", label: "Teknik" },
+  { id: "expertiz", label: "Ekspertiz" },
+  { id: "tramer", label: "Tramer" },
+  { id: "contact", label: "İletişim" },
+  { id: "review", label: "Özet" },
 ];
+
+/* ------------- INITIAL DATA ------------- */
 
 const initialFormData = {
   modelYili: "",
@@ -45,12 +55,17 @@ const initialFormData = {
     OnTampon: "1",
     ArkaTampon: "1",
   },
-  tramer: { value: "", tutar: "" },
+  tramer: {
+    value: "",
+    tutar: "",
+  },
   adSoyad: "",
   telefon: "",
   eposta: "",
   plaka: "",
 };
+
+/* ============== MAIN COMPONENT ============== */
 
 export default function CarFormWizard({ onSuccess, setLoading }) {
   const [currentStep, setCurrentStep] = useState(0);
@@ -58,29 +73,49 @@ export default function CarFormWizard({ onSuccess, setLoading }) {
   const [direction, setDirection] = useState(0);
   const [submitting, setSubmitting] = useState(false);
 
+  const markaSecildi = Boolean(formData.marka);
+
+  /* -------- FORM UPDATE -------- */
+
   const updateField = (name, value) => {
     if (name.includes(".")) {
       const [parent, child] = name.split(".");
       setFormData((prev) => ({
         ...prev,
-        [parent]: { ...prev[parent], [child]: value },
+        [parent]: {
+          ...prev[parent],
+          [child]: value,
+        },
       }));
     } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   };
+
+  const handleMarkaSecti = (marka) => {
+    setFormData((prev) => ({
+      ...prev,
+      marka,
+      seri: "",
+    }));
+  };
+
+  /* -------- NAVIGATION -------- */
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
       setDirection(1);
-      setCurrentStep((prev) => prev + 1);
+      setCurrentStep((s) => s + 1);
     }
   };
 
   const prevStep = () => {
     if (currentStep > 0) {
       setDirection(-1);
-      setCurrentStep((prev) => prev - 1);
+      setCurrentStep((s) => s - 1);
     }
   };
 
@@ -89,20 +124,25 @@ export default function CarFormWizard({ onSuccess, setLoading }) {
     setCurrentStep(index);
   };
 
+  /* -------- SUBMIT -------- */
+
   const handleSubmit = async () => {
     setSubmitting(true);
     setLoading(true);
+
     try {
       const offers = await createCarRequest(formData);
       onSuccess(offers);
     } catch (err) {
-      console.error("Teklif alma hatası:", err);
-      alert("Teklif alınırken bir hata oluştu.");
+      console.error(err);
+      alert("Teklif alınırken hata oluştu");
     } finally {
       setSubmitting(false);
       setLoading(false);
     }
   };
+
+  /* -------- STEP RENDER -------- */
 
   const renderStep = () => {
     switch (steps[currentStep].id) {
@@ -125,78 +165,98 @@ export default function CarFormWizard({ onSuccess, setLoading }) {
 
   const progress = ((currentStep + 1) / steps.length) * 100;
 
+  /* ========== MARKA SEÇİLMEDEN ÖNCE ========== */
+
+  if (!markaSecildi) {
+    return (
+      <div className="glass-card p-10 flex flex-col items-center gap-6">
+        <h2 className="text-2xl font-bold text-white">
+          Araç Markasını Seç
+        </h2>
+        <p className="text-slate-400 text-sm">
+          Devam etmek için önce marka seçmelisin
+        </p>
+        <MarkaDropdown onMarkaSecti={handleMarkaSecti} />
+      </div>
+    );
+  }
+
+  /* ========== WIZARD ========== */
+
   return (
     <div className="glass-card overflow-hidden">
-      <div className="h-1.5 bg-muted">
+      {/* Progress */}
+      <div className="h-1 bg-slate-800">
         <motion.div
-          className="h-full bg-gradient-to-r from-primary to-primary-400"
-          initial={{ width: 0 }}
+          className="h-full bg-primary"
           animate={{ width: `${progress}%` }}
-          transition={{ duration: 0.3, ease: "easeOut" }}
+          transition={{ duration: 0.3 }}
         />
       </div>
 
-      <div className="px-6 py-6 border-b border-border/60">
-        <StepIndicator steps={steps} currentStep={currentStep} onStepClick={goToStep} />
+      {/* Steps */}
+      <div className="px-6 py-4 border-b border-slate-700">
+        <StepIndicator
+          steps={steps}
+          currentStep={currentStep}
+          onStepClick={goToStep}
+        />
       </div>
 
-      <div className="p-6 md:p-8 min-h-[400px]">
+      {/* Content */}
+      <div className="p-6 min-h-[420px]">
         <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={currentStep}
-            custom={direction}
-            initial={{ opacity: 0, x: direction * 50 }}
+            initial={{ opacity: 0, x: direction * 40 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: direction * -50 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
+            exit={{ opacity: 0, x: -direction * 40 }}
+            transition={{ duration: 0.25 }}
           >
             {renderStep()}
           </motion.div>
         </AnimatePresence>
       </div>
 
-      <div className="px-6 md:px-8 py-5 bg-muted/50 border-t border-border/60">
-        <div className="flex items-center justify-between">
-          <button
-            type="button"
-            onClick={prevStep}
-            disabled={currentStep === 0}
-            className="btn-secondary flex items-center gap-2 disabled:invisible"
-          >
-            <ChevronLeft className="w-5 h-5" />
-            <span className="hidden sm:inline">Geri</span>
+      {/* Footer */}
+      <div className="px-6 py-4 flex justify-between items-center border-t border-slate-700">
+        <button
+          onClick={prevStep}
+          disabled={currentStep === 0}
+          className="btn-secondary disabled:opacity-0"
+        >
+          <ChevronLeft className="w-5 h-5" />
+          Geri
+        </button>
+
+        <span className="text-sm text-slate-400">
+          {currentStep + 1} / {steps.length}
+        </span>
+
+        {currentStep < steps.length - 1 ? (
+          <button onClick={nextStep} className="btn-primary">
+            İleri
+            <ChevronRight className="w-5 h-5" />
           </button>
-
-          <span className="text-sm text-muted-foreground">
-            Adım {currentStep + 1} / {steps.length}
-          </span>
-
-          {currentStep < steps.length - 1 ? (
-            <button type="button" onClick={nextStep} className="btn-primary flex items-center gap-2">
-              <span className="hidden sm:inline">Sonraki</span>
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={submitting}
-              className="btn-primary flex items-center gap-2"
-            >
-              {submitting ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span>Gönderiliyor...</span>
-                </>
-              ) : (
-                <>
-                  <Send className="w-5 h-5" />
-                  <span>Teklifleri Getir</span>
-                </>
-              )}
-            </button>
-          )}
-        </div>
+        ) : (
+          <button
+            onClick={handleSubmit}
+            disabled={submitting}
+            className="btn-primary"
+          >
+            {submitting ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Gönderiliyor
+              </>
+            ) : (
+              <>
+                <Send className="w-5 h-5" />
+                Teklifleri Getir
+              </>
+            )}
+          </button>
+        )}
       </div>
     </div>
   );
