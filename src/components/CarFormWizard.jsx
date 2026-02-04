@@ -14,6 +14,7 @@ import StepReview from "./steps/StepReview";
 import MarkaDropdown from "./steps/BrandDropdown";
 
 import { createCarRequest } from "../services/carRequestApi";
+import { useGlobalAlert } from "../components/ui/GlobalAlert";
 
 const steps = [
   { id: "basic", label: "Araç Bilgisi" },
@@ -61,21 +62,20 @@ export default function CarFormWizard({ onSuccess, setLoading, onStart }) {
   const [direction, setDirection] = useState(0);
   const [submitting, setSubmitting] = useState(false);
 
+  // ✅ Global alert
+  const { showAlert } = useGlobalAlert();
+
   const markaSecildi = Boolean(formData.marka);
 
-  // ✅ İSTEDİĞİN UX
-  const BUTTON_SPINNER_MS = 900; // butonda biraz spinner
-  const MIN_OFFERS_LOADING_MS = 4500; // büyüteç ekranı min 4-5 sn
+  const BUTTON_SPINNER_MS = 900;
+  const MIN_OFFERS_LOADING_MS = 4500;
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-  // ✅ Wizard üst anchor
   const wizardTopRef = useRef(null);
 
-  // ✅ En sağlam scroll: window değil container scroll ise onu yakala ve en üste taşı
   const scrollToWizardTop = () => {
     const anchor = wizardTopRef.current;
 
-    // 1) Önce varsa scroll container bul
     if (anchor) {
       let p = anchor.parentElement;
 
@@ -83,7 +83,8 @@ export default function CarFormWizard({ onSuccess, setLoading, onStart }) {
         const style = window.getComputedStyle(p);
         const overflowY = style.overflowY;
         const isScrollable =
-          (overflowY === "auto" || overflowY === "scroll") && p.scrollHeight > p.clientHeight;
+          (overflowY === "auto" || overflowY === "scroll") &&
+          p.scrollHeight > p.clientHeight;
 
         if (isScrollable) {
           p.scrollTo({ top: 0, behavior: "smooth" });
@@ -92,22 +93,17 @@ export default function CarFormWizard({ onSuccess, setLoading, onStart }) {
         p = p.parentElement;
       }
 
-      // 2) Anchor'ı da ayrıca hedefleyelim (bazı layoutlarda daha iyi)
       requestAnimationFrame(() => {
         anchor.scrollIntoView({ behavior: "smooth", block: "start" });
       });
     }
 
-    // 3) Yine de window'a da bas (bazı sayfalarda asıl scroll budur)
     window.scrollTo({ top: 0, behavior: "smooth" });
-
-    // 4) Bazı durumlarda (Framer/DOM paint) ilk frame yetmiyor → küçük gecikme ile garanti
     setTimeout(() => {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }, 60);
   };
 
-  // ✅ Step değişince kesin en üste al
   useEffect(() => {
     scrollToWizardTop();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -129,7 +125,99 @@ export default function CarFormWizard({ onSuccess, setLoading, onStart }) {
     setFormData((prev) => ({ ...prev, marka, seri: "" }));
   };
 
+  // ✅ zorunlu alan kontrol helper
+  const isFilled = (v) => String(v ?? "").trim().length > 0;
+
+  // ✅ Step validation (senin kurala göre)
+  const validateStep = (stepId) => {
+    if (stepId === "basic") {
+      const missing = [];
+      if (!isFilled(formData.marka)) missing.push("Marka");
+      if (!isFilled(formData.seri)) missing.push("Model / Seri");
+      if (!isFilled(formData.modelYili)) missing.push("Model Yılı");
+      if (!isFilled(formData.km)) missing.push("Kilometre");
+
+      if (missing.length) {
+        showAlert(`Devam etmek için doldur: ${missing.join(", ")}`);
+        return false;
+      }
+      return true;
+    }
+
+    if (stepId === "specs") {
+      const missing = [];
+      if (!isFilled(formData.vites)) missing.push("Vites");
+      if (!isFilled(formData.yakit)) missing.push("Yakıt");
+      if (!isFilled(formData.bodyType)) missing.push("Kasa Tipi");
+      if (!isFilled(formData.renk)) missing.push("Renk");
+
+      if (missing.length) {
+        showAlert(`Devam etmek için doldur: ${missing.join(", ")}`);
+        return false;
+      }
+      return true;
+    }
+
+    if (stepId === "expertiz") {
+      const values = Object.values(formData.expertiz || {});
+      const ok = values.length > 0 && values.every((v) => isFilled(v));
+      if (!ok) {
+        showAlert("Devam etmek için ekspertiz alanlarının tamamını seçmelisin.");
+        return false;
+      }
+      return true;
+    }
+
+   if (stepId === "tramer") {
+  // StepTramer'a göre:
+  // "1" = Tramer Var → tutar zorunlu
+  // "2" = Tramer Yok
+  // "3" = Bilmiyorum
+  // "4" = Ağır Hasar (istersen burada da tutar zorunlu yapabiliriz ama şimdilik istemedin)
+
+  const hasTramer = String(formData.tramer?.value ?? "") === "1";
+
+  if (hasTramer && !isFilled(formData.tramer?.tutar)) {
+    showAlert("Tramer var ise tramer tutarı zorunludur");
+    return false;
+  }
+
+  return true;
+}
+
+
+
+    if (stepId === "contact") {
+      const missing = [];
+      if (!isFilled(formData.adSoyad)) missing.push("Ad Soyad");
+      if (!isFilled(formData.telefon)) missing.push("Telefon");
+      if (missing.length) {
+        showAlert(`Devam etmek için doldur: ${missing.join(", ")}`);
+        return false;
+      }
+      return true;
+    }
+
+    return true;
+  };
+
+  // ✅ Submit öncesi hepsini kontrol et
+  const validateAllBeforeSubmit = () => {
+    const mustCheck = ["basic", "specs", "expertiz", "tramer", "contact"];
+    for (const id of mustCheck) {
+      if (!validateStep(id)) return false;
+    }
+    return true;
+  };
+
   const nextStep = () => {
+    if (submitting) return;
+
+    const stepId = steps[currentStep]?.id;
+
+    // ✅ mevcut step tamamlanmadan ilerleme
+    if (!validateStep(stepId)) return;
+
     if (currentStep < steps.length - 1) {
       setDirection(1);
       setCurrentStep((s) => s + 1);
@@ -143,52 +231,44 @@ export default function CarFormWizard({ onSuccess, setLoading, onStart }) {
     }
   };
 
-  const goToStep = (index) => {
-    setDirection(index > currentStep ? 1 : -1);
-    setCurrentStep(index);
+  // ✅ StepIndicator tıklamayı tamamen kilitle (sadece gösterim)
+  const goToStep = () => {
+    return;
   };
 
- const handleSubmit = async () => {
-  if (submitting) return;
+  const handleSubmit = async () => {
+    if (submitting) return;
 
-  // 1️⃣ Buton spinner başlasın
-  setSubmitting(true);
+    // ✅ submit öncesi full validation
+    if (!validateAllBeforeSubmit()) return;
 
-  // ⏳ Spinner süresi
-  await sleep(BUTTON_SPINNER_MS);
+    setSubmitting(true);
+    await sleep(BUTTON_SPINNER_MS);
 
-  // ✅ SPINNER BİTTİKTEN SONRA SAYFAYI EN ÜSTE AL
-  window.scrollTo({ top: 0, behavior: "smooth" });
+    scrollToWizardTop();
 
-  // 2️⃣ Artık teklif loading ekranına geç
-  onStart?.();
-  setLoading?.(true);
+    onStart?.();
+    setLoading?.(true);
 
-  const startedAt = Date.now();
+    const startedAt = Date.now();
 
-  try {
-    const offers = await createCarRequest(formData);
+    try {
+      const offers = await createCarRequest(formData);
 
-    // 3️⃣ Loading minimum süresini garanti et
-    const elapsed = Date.now() - startedAt;
-    if (elapsed < MIN_OFFERS_LOADING_MS) {
-      await sleep(MIN_OFFERS_LOADING_MS - elapsed);
+      const elapsed = Date.now() - startedAt;
+      if (elapsed < MIN_OFFERS_LOADING_MS) {
+        await sleep(MIN_OFFERS_LOADING_MS - elapsed);
+      }
+
+      onSuccess(offers);
+    } catch (err) {
+      console.error(err);
+      showAlert("Teklif alınırken hata oluştu");
+    } finally {
+      setSubmitting(false);
+      setLoading?.(false);
     }
-
-    // (istersen burada tekrar scroll da kalabilir ama şart değil)
-    // window.scrollTo({ top: 0, behavior: "smooth" });
-
-    // 4️⃣ Teklifleri bas
-    onSuccess(offers);
-  } catch (err) {
-    console.error(err);
-    alert("Teklif alınırken hata oluştu");
-  } finally {
-    setSubmitting(false);
-    setLoading?.(false);
-  }
-};
-
+  };
 
   const renderStep = () => {
     switch (steps[currentStep].id) {
@@ -209,37 +289,42 @@ export default function CarFormWizard({ onSuccess, setLoading, onStart }) {
     }
   };
 
-  const progress = ((currentStep + 1) / steps.length) * 100;
   const isLast = currentStep === steps.length - 1;
 
   if (!markaSecildi) {
     return (
-      <div className="glass-card p-10 flex flex-col items-center gap-6">
-        <h2 className="text-2xl font-bold text-white">Araç Markasını Seç</h2>
-        <p className="text-slate-400 text-sm">Devam etmek için önce marka seçmelisin</p>
-        <MarkaDropdown onMarkaSecti={handleMarkaSecti} />
+     <div className="glass-card w-full md:max-w-md lg:max-w-lg mx-auto p-6 sm:p-10 flex flex-col items-center gap-6">
+
+
+        <h2 className="text-xl sm:text-2xl font-bold text-white">
+          Araç Markasını Seç
+        </h2>
+        <p className="text-slate-400 text-sm text-center">
+          Devam etmek için önce marka seçmelisin
+        </p>
+        <div className="w-full">
+          <MarkaDropdown onMarkaSecti={handleMarkaSecti} />
+        </div>
       </div>
     );
   }
 
   return (
-    // ✅ ÖNEMLİ: overflow-hidden sticky'yi bozabiliyor → kaldırdık
-    <div className="glass-card">
-      {/* ✅ anchor */}
+    <div className="glass-card w-full max-w-4xl mx-auto">
       <div ref={wizardTopRef} />
 
-      {/* ✅ Köşe kırpma gerekiyorsa: overflow'u sadece içerik bloğuna taşı */}
       <div className="overflow-hidden">
         {/* Step Indicator */}
-        <div className="px-6 py-4 border-b border-slate-700">
+        <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-700">
           <StepIndicator steps={steps} currentStep={currentStep} onStepClick={goToStep} />
         </div>
 
         {/* Content */}
-        <div className="p-6 min-h-[300px] pb-28">
+        <div className="p-4 sm:p-6 min-h-[220px] sm:min-h-[300px] pb-32 sm:pb-28">
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={currentStep}
+              className="w-full"
               initial={{ opacity: 0, x: direction * 40 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -direction * 40 }}
@@ -251,16 +336,15 @@ export default function CarFormWizard({ onSuccess, setLoading, onStart }) {
         </div>
       </div>
 
-      {/* ✅ Sticky Footer (artık Expertiz’de de sabit görünecek) */}
-      <div className="sticky bottom-0 z-20 border-t border-slate-700 bg-slate-950/80 backdrop-blur-md">
-        <div className="px-6 py-4 flex items-center justify-between gap-4">
-          {/* Back */}
+      {/* Sticky Footer */}
+      <div className="sticky bottom-0 z-20 border-t border-slate-700 bg-slate-950/80 backdrop-blur-md pb-[env(safe-area-inset-bottom)]">
+        <div className="px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3 sm:gap-4">
           <button
             onClick={prevStep}
             disabled={currentStep === 0 || submitting}
             className="
               inline-flex items-center gap-2
-              rounded-xl px-4 py-2.5 text-sm font-semibold
+              rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold
               bg-slate-800 text-slate-200
               border border-white/10
               shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]
@@ -275,19 +359,17 @@ export default function CarFormWizard({ onSuccess, setLoading, onStart }) {
             Geri
           </button>
 
-          {/* Step info */}
-          <span className="text-sm text-slate-400 whitespace-nowrap">
+          <span className="text-xs sm:text-sm text-slate-400 whitespace-nowrap">
             {currentStep + 1} / {steps.length}
           </span>
 
-          {/* Next / Submit */}
           {!isLast ? (
             <button
               onClick={nextStep}
               disabled={submitting}
               className="
                 inline-flex items-center gap-2
-                rounded-xl px-5 py-2.5 text-sm font-semibold
+                rounded-xl px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold
                 bg-emerald-500 text-emerald-950
                 shadow-md
                 hover:bg-emerald-400
@@ -306,7 +388,7 @@ export default function CarFormWizard({ onSuccess, setLoading, onStart }) {
               disabled={submitting}
               className="
                 inline-flex items-center gap-2
-                rounded-xl px-5 py-2.5 text-sm font-semibold
+                rounded-xl px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold
                 bg-emerald-500 text-emerald-950
                 shadow-md
                 hover:bg-emerald-400

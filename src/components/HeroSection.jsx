@@ -5,10 +5,12 @@ import { useEffect, useState } from "react";
 import { ShieldCheck, TrendingUp } from "lucide-react";
 
 const partners = [
-  { name: "VavaCars", slogan: "Anında nakit ödeme", color: "#16a34a" },
-  { name: "Arabam.com", slogan: "Türkiye’nin en büyük pazarı", color: "#2563eb" },
-  { name: "Otokazanç", slogan: "Ücretsiz ekspertiz", color: "#9333ea" },
-  { name: "Letgo Auto", slogan: "Güvenli araç satışı", color: "#f59e0b" },
+  { name: "HızlıOtoTeklif", slogan: "Anında nakit ödeme", color: "#16a34a" },
+  { name: "AnındaSat.com", slogan: "Türkiye’nin en büyük pazarı", color: "#2563eb" },
+  { name: "OtoExpres", slogan: "Ücretsiz ekspertiz", color: "#9333ea" },
+  { name: "ArabaDeğerleme.net", slogan: "Güvenli araç satışı", color: "#f59e0b" },
+  { name: "SatışGarantili", slogan: "Güvenli araç satışı", color: "#ff0000" },
+
 ];
 
 export default function HeroSection() {

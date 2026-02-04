@@ -17,14 +17,14 @@ const STEP_ICONS = {
   review: ClipboardList,
 };
 
-export default function StepIndicator({ steps, currentStep, onStepClick }) {
+export default function StepIndicator({ steps, currentStep }) {
   const total = Math.max(steps.length - 1, 1);
   const percent = Math.round((currentStep / total) * 100);
 
   return (
     <div className="space-y-3">
-      {/* ✅ Steps row */}
-      <div className="flex items-center gap-5 overflow-x-auto">
+      {/* ✅ MOBİL: sadece ikonlar (tıklanmaz) */}
+      <div className="sm:hidden flex items-center justify-between gap-2">
         {steps.map((step, index) => {
           const isCompleted = index < currentStep;
           const isActive = index === currentStep;
@@ -34,20 +34,19 @@ export default function StepIndicator({ steps, currentStep, onStepClick }) {
             <button
               key={step.id}
               type="button"
-              onClick={() => onStepClick(index)}
-              className={`
-                group flex items-center gap-2.5 px-3 py-2 rounded-xl
-                whitespace-nowrap transition
-                hover:bg-white/5
-                ${isActive ? "cursor-default" : "cursor-pointer"}
-              `}
+              disabled
+              aria-label={step.label}
+              title={step.label}
+              className="
+                flex-1 flex items-center justify-center
+                py-2 rounded-xl
+                pointer-events-none cursor-default
+              "
             >
-              {/* Icon bubble */}
               <span
                 className={`
                   relative inline-flex items-center justify-center
-                  w-9 h-9 rounded-full border
-                  transition
+                  w-9 h-9 rounded-full border transition
                   ${
                     isCompleted
                       ? "bg-emerald-500/10 border-emerald-500/30"
@@ -65,12 +64,68 @@ export default function StepIndicator({ steps, currentStep, onStepClick }) {
                         ? "text-emerald-400"
                         : isActive
                         ? "text-primary"
-                        : "text-slate-400 group-hover:text-slate-300"
+                        : "text-slate-400"
                     }
                   `}
                 />
 
-                {/* ✅ completed badge */}
+                {isCompleted && (
+                  <span className="absolute -right-1 -bottom-1 w-4.5 h-4.5 rounded-full bg-emerald-500 text-emerald-950 flex items-center justify-center shadow">
+                    <Check className="w-3 h-3" />
+                  </span>
+                )}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ✅ DESKTOP: ikon + label (tıklanmaz) */}
+      <div className="hidden sm:flex items-center justify-between w-full">
+        {steps.map((step, index) => {
+          const isCompleted = index < currentStep;
+          const isActive = index === currentStep;
+          const Icon = STEP_ICONS[step.id] || ClipboardList;
+
+          return (
+            <button
+              key={step.id}
+              type="button"
+              disabled
+              className="
+                group flex items-center gap-2.5 px-3 py-2 rounded-xl
+                whitespace-nowrap
+                pointer-events-none cursor-default
+              "
+              aria-label={step.label}
+              title={step.label}
+            >
+              <span
+                className={`
+                  relative inline-flex items-center justify-center
+                  w-9 h-9 rounded-full border transition
+                  ${
+                    isCompleted
+                      ? "bg-emerald-500/10 border-emerald-500/30"
+                      : isActive
+                      ? "bg-primary/12 border-primary/35 shadow-[0_0_0_6px_rgba(59,130,246,0.08)]"
+                      : "bg-white/5 border-white/10"
+                  }
+                `}
+              >
+                <Icon
+                  className={`
+                    w-4.5 h-4.5 transition
+                    ${
+                      isCompleted
+                        ? "text-emerald-400"
+                        : isActive
+                        ? "text-primary"
+                        : "text-slate-400"
+                    }
+                  `}
+                />
+
                 {isCompleted && (
                   <span className="absolute -right-1 -bottom-1 w-4.5 h-4.5 rounded-full bg-emerald-500 text-emerald-950 flex items-center justify-center shadow">
                     <Check className="w-3 h-3" />
@@ -78,7 +133,6 @@ export default function StepIndicator({ steps, currentStep, onStepClick }) {
                 )}
               </span>
 
-              {/* Label */}
               <span
                 className={`
                   text-sm font-semibold transition
@@ -87,7 +141,7 @@ export default function StepIndicator({ steps, currentStep, onStepClick }) {
                       ? "text-emerald-300"
                       : isActive
                       ? "text-white"
-                      : "text-slate-400 group-hover:text-slate-300"
+                      : "text-slate-400"
                   }
                 `}
               >
@@ -98,7 +152,7 @@ export default function StepIndicator({ steps, currentStep, onStepClick }) {
         })}
       </div>
 
-      {/* ✅ Progress bar (ALTTA) */}
+      {/* ✅ Progress bar */}
       <div className="h-1.5 w-full rounded-full bg-white/5 overflow-hidden">
         <div
           className="h-full rounded-full bg-gradient-to-r from-primary via-sky-400 to-emerald-400 transition-[width] duration-500"

@@ -30,16 +30,28 @@ export default function MarkaDropdown({ onMarkaSecti }) {
   );
 
   return (
-    <div className="relative w-full max-w-sm">
+  
+    <div className="relative w-full sm:max-w-sm mx-auto">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         className="
-          input flex items-center justify-between
+          w-full
+          input
+          flex items-center justify-between
+          h-12
+          px-4
+          rounded-2xl
+          border border-white/10
+          bg-white/5
+          shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]
+          hover:bg-white/7
+          transition
           text-slate-900 dark:text-white
         "
       >
-        <span className="font-medium">Marka seç</span>
+        <span className="font-semibold truncate">Marka seç</span>
+
         <ChevronDown
           className={`w-4 h-4 text-slate-500 dark:text-slate-300 transition-transform ${
             open ? "rotate-180" : ""
@@ -52,11 +64,11 @@ export default function MarkaDropdown({ onMarkaSecti }) {
           className="
             absolute z-50 mt-2 w-full rounded-2xl
             bg-white/90 dark:bg-slate-900/80 backdrop-blur-md
-            border border-slate-200 dark:border-slate-700
-            shadow-xl overflow-hidden
+            border border-slate-200/70 dark:border-slate-700/80
+            shadow-2xl overflow-hidden
           "
         >
-          <div className="p-2 border-b border-slate-200 dark:border-slate-700">
+          <div className="p-2 border-b border-slate-200/70 dark:border-slate-700/80">
             <div className="relative">
               <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
               <input
@@ -65,11 +77,11 @@ export default function MarkaDropdown({ onMarkaSecti }) {
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Ara..."
                 className="
-                  w-full pl-9 pr-3 py-2 rounded-lg text-sm
+                  w-full pl-9 pr-3 py-2.5 rounded-xl text-sm
                   bg-white/80 dark:bg-slate-800/70
                   text-slate-900 dark:text-white
                   placeholder:text-slate-400
-                  focus:outline-none focus:ring-2 focus:ring-indigo-500
+                  focus:outline-none focus:ring-2 focus:ring-indigo-500/70
                 "
               />
             </div>
@@ -91,7 +103,7 @@ export default function MarkaDropdown({ onMarkaSecti }) {
                     setSearch("");
                   }}
                   className="
-                    w-full text-left px-4 py-2.5 text-sm
+                    w-full text-left px-4 py-3 text-sm
                     text-slate-900 dark:text-white
                     hover:bg-indigo-500/10 dark:hover:bg-indigo-500/20
                     transition
