@@ -76,7 +76,6 @@ export default function StepSpecs({ formData, updateField }) {
         />
 
         {/* Renk → TAM GENİŞLİK */}
-        <div className="md:col-span-2">
           <SelectField
             label="Renk"
             icon={Palette}
@@ -95,6 +94,5 @@ export default function StepSpecs({ formData, updateField }) {
           />
         </div>
       </div>
-    </div>
   );
 }

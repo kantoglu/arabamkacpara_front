@@ -168,7 +168,7 @@ export default function OffersDisplay({ offers = [], isLoading = false, onReset 
           <CheckCircle2 className="w-8 h-8 text-emerald-400" />
         </motion.div>
 
-        <h2 className="text-2xl font-semibold text-white">{offers.length} teklif bulundu</h2>
+        <h2 className="text-2xl font-semibold text-white">{offers.length} Teklif getirildi</h2>
         <p className="text-slate-400 mt-2">
           Ortalama değer:{" "}
           <span className="font-semibold text-white">{Math.round(avgPrice).toLocaleString("tr-TR")} TL</span>

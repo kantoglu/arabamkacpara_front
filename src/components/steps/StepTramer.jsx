@@ -32,17 +32,18 @@ export default function StepTramer({ formData, updateField }) {
     },
   ];
 
-  const selectedOption = tramerOptions.find((o) => o.value === formData.tramer.value);
-
   return (
     <div className="space-y-6 text-white">
-      <div className="mb-6">
+      {/* Başlık */}
+      <div>
         <h2 className="text-xl font-semibold mb-1">Tramer Kaydı</h2>
-        <p className="text-sm text-white/70">Aracınızın tramer (hasar) kaydı durumunu belirtin.</p>
+        <p className="text-sm text-white/70">
+          Aracınızın tramer (hasar) kaydı durumunu belirtin.
+        </p>
       </div>
 
-      {/* Tramer Seçenekleri */}
-      <div className="grid grid-cols-2 gap-4">
+      {/* ✅ SADECE BURASI KÜÇÜLDÜ */}
+      <div className="max-w-3xl mx-auto grid grid-cols-2 gap-4">
         {tramerOptions.map((option) => {
           const Icon = option.icon;
           const isSelected = formData.tramer.value === option.value;
@@ -67,9 +68,9 @@ export default function StepTramer({ formData, updateField }) {
         })}
       </div>
 
-      {/* Tramer Tutarı Girişi */}
+      {/* Tramer Tutarı */}
       {formData.tramer.value === "1" && (
-        <div className="mt-6 p-5 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+        <div className="max-w-3xl mx-auto p-5 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
           <label className="block text-sm font-medium text-amber-800 dark:text-amber-300 mb-3">
             Tramer Tutarı (TL)
           </label>
@@ -79,7 +80,6 @@ export default function StepTramer({ formData, updateField }) {
               ₺
             </span>
 
-            {/* ✅ FIX: arka plan koyu + yazı beyaz (tema fark etmez) */}
             <input
               type="number"
               placeholder="örn: 25000"
@@ -102,12 +102,12 @@ export default function StepTramer({ formData, updateField }) {
         </div>
       )}
 
-      {/* Bilgilendirme Kutusu */}
-      <div className="p-4 rounded-xl bg-muted/50 border border-border">
+      {/* Bilgilendirme */}
+      <div className="max-w-3xl mx-auto p-4 rounded-xl bg-muted/50 border border-border">
         <h4 className="font-medium text-white mb-2">Tramer Nedir?</h4>
         <p className="text-sm text-white/70">
-          TRAMER (Trafik Sigortaları Bilgi ve Gözetim Merkezi), araçların sigorta şirketlerine bildirilen hasar
-          kayıtlarını tutan sistemdir. Bu kayıtlar aracın geçmişi hakkında önemli bilgiler içerir.
+          TRAMER (Trafik Sigortaları Bilgi ve Gözetim Merkezi), araçların sigorta
+          şirketlerine bildirilen hasar kayıtlarını tutan sistemdir.
         </p>
       </div>
     </div>

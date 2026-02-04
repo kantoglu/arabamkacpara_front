@@ -42,7 +42,7 @@ export default function HowItWorksSection() {
               Nasıl <span className="text-[var(--primary)]">çalışır?</span>
             </h2>
             <p className="mt-2 text-sm sm:text-base text-white/70 max-w-2xl">
-              Geliştirdiğin backend ile gerçek teklif entegrasyonuna hazır, sade ama modern bir akış.
+              Gelişmiş altyapımız sayesinde, gerçek teklif entegrasyonlarına hazır, hızlı ve sade bir deneyim sunuyoruz.
             </p>
 
             {/* underline */}

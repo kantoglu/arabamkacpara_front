@@ -1,65 +1,110 @@
-import { Check, Car, Settings, ClipboardCheck, Shield, User } from "lucide-react";
+import {
+  Car,
+  Settings2,
+  ShieldCheck,
+  BadgeAlert,
+  PhoneCall,
+  ClipboardList,
+  Check,
+} from "lucide-react";
 
-const iconMap = {
-  car: Car,
-  settings: Settings,
-  clipboard: ClipboardCheck,
-  shield: Shield,
-  user: User,
-  check: Check,
+const STEP_ICONS = {
+  basic: Car,
+  specs: Settings2,
+  expertiz: ShieldCheck,
+  tramer: BadgeAlert,
+  contact: PhoneCall,
+  review: ClipboardList,
 };
 
 export default function StepIndicator({ steps, currentStep, onStepClick }) {
-  return (
-    <div className="flex items-center justify-between">
-      {steps.map((step, index) => {
-        const Icon = iconMap[step.icon] || Check;
-        const isCompleted = index < currentStep;
-        const isActive = index === currentStep;
-        const isClickable = index <= currentStep;
+  const total = Math.max(steps.length - 1, 1);
+  const percent = Math.round((currentStep / total) * 100);
 
-        return (
-          <div key={step.id} className="flex items-center flex-1 last:flex-none">
+  return (
+    <div className="space-y-3">
+      {/* ✅ Steps row */}
+      <div className="flex items-center gap-5 overflow-x-auto">
+        {steps.map((step, index) => {
+          const isCompleted = index < currentStep;
+          const isActive = index === currentStep;
+          const Icon = STEP_ICONS[step.id] || ClipboardList;
+
+          return (
             <button
+              key={step.id}
               type="button"
-              onClick={() => isClickable && onStepClick(index)}
-              disabled={!isClickable}
-              className={`flex flex-col items-center gap-2 group ${
-                isClickable ? "cursor-pointer" : "cursor-not-allowed"
-              }`}
+              onClick={() => onStepClick(index)}
+              className={`
+                group flex items-center gap-2.5 px-3 py-2 rounded-xl
+                whitespace-nowrap transition
+                hover:bg-white/5
+                ${isActive ? "cursor-default" : "cursor-pointer"}
+              `}
             >
-              <div
-                className={`step-indicator ${
-                  isCompleted ? "step-completed" : isActive ? "step-active" : "step-inactive"
-                }`}
-              >
-                {isCompleted ? <Check className="w-5 h-5" /> : <Icon className="w-5 h-5" />}
-              </div>
+              {/* Icon bubble */}
               <span
-                className={`text-xs font-medium hidden md:block transition-colors ${
-                  isActive
-                    ? "text-primary"
-                    : isCompleted
-                    ? "text-emerald-600 dark:text-emerald-400"
-                    : "text-muted-foreground"
-                }`}
+                className={`
+                  relative inline-flex items-center justify-center
+                  w-9 h-9 rounded-full border
+                  transition
+                  ${
+                    isCompleted
+                      ? "bg-emerald-500/10 border-emerald-500/30"
+                      : isActive
+                      ? "bg-primary/12 border-primary/35 shadow-[0_0_0_6px_rgba(59,130,246,0.08)]"
+                      : "bg-white/5 border-white/10"
+                  }
+                `}
+              >
+                <Icon
+                  className={`
+                    w-4.5 h-4.5 transition
+                    ${
+                      isCompleted
+                        ? "text-emerald-400"
+                        : isActive
+                        ? "text-primary"
+                        : "text-slate-400 group-hover:text-slate-300"
+                    }
+                  `}
+                />
+
+                {/* ✅ completed badge */}
+                {isCompleted && (
+                  <span className="absolute -right-1 -bottom-1 w-4.5 h-4.5 rounded-full bg-emerald-500 text-emerald-950 flex items-center justify-center shadow">
+                    <Check className="w-3 h-3" />
+                  </span>
+                )}
+              </span>
+
+              {/* Label */}
+              <span
+                className={`
+                  text-sm font-semibold transition
+                  ${
+                    isCompleted
+                      ? "text-emerald-300"
+                      : isActive
+                      ? "text-white"
+                      : "text-slate-400 group-hover:text-slate-300"
+                  }
+                `}
               >
                 {step.label}
               </span>
             </button>
+          );
+        })}
+      </div>
 
-            {index < steps.length - 1 && (
-              <div className="flex-1 mx-2 md:mx-4">
-                <div
-                  className={`h-0.5 rounded-full transition-colors ${
-                    index < currentStep ? "bg-emerald-500" : "bg-border"
-                  }`}
-                />
-              </div>
-            )}
-          </div>
-        );
-      })}
+      {/* ✅ Progress bar (ALTTA) */}
+      <div className="h-1.5 w-full rounded-full bg-white/5 overflow-hidden">
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-primary via-sky-400 to-emerald-400 transition-[width] duration-500"
+          style={{ width: `${percent}%` }}
+        />
+      </div>
     </div>
   );
 }

@@ -4,7 +4,6 @@ import { Bell, Check } from "lucide-react";
 export default function AppDownloadSection({
   title = "ArabanKaçPara uygulamasını indirin",
   bullets = [
-    "Fiyatlar düştüğünde bildirim alın",
     "Uygulamaya özel fırsatların kilidini açın",
     "Teklifleri tek ekranda karşılaştırın",
   ],

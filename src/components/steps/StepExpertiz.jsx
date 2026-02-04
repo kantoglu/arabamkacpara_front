@@ -125,13 +125,14 @@ export default function StepExpertiz({ formData, updateField }) {
         <div className="bg-slate-900 rounded-lg p-4 border border-slate-700">
           <h3 className="text-sm font-semibold text-white mb-3">Araç Krokisi</h3>
 
-          <div className="relative">
-            <svg
-              width="100%"
-              viewBox="0 0 227 303"
-              className="max-h-[400px] h-auto"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+         <div className="relative">
+  {/* ✅ SVG için alanı baştan ayır: layout shift olmasın */}
+  <div className="w-full max-w-[520px] mx-auto h-[380px] md:h-[420px] flex items-center justify-center">
+    <svg
+      viewBox="0 0 227 303"
+      className="w-full h-full"
+      xmlns="http://www.w3.org/2000/svg"
+    >
               <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
                 <g transform="translate(-1002.000000, -232.000000)">
                   <g transform="translate(1003.000000, 233.000000)">
@@ -327,6 +328,7 @@ export default function StepExpertiz({ formData, updateField }) {
                 </g>
               </g>
             </svg>
+            </div>
 
             {/* ✅ Sabit kutu: hep görünür, hover yoksa "Bir parça seçin" */}
             <div
