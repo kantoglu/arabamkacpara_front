@@ -4,6 +4,163 @@ import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, ArrowRight, RefreshCcw, CheckCircle2, Search } from "lucide-react";
 
+function SupportModal({ open, onClose, onProceed }) {
+  const [isMobile, setIsMobile] = useState(true); // default mobile
+  const [evadeCount, setEvadeCount] = useState(0);
+  const [canClick, setCanClick] = useState(false);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+
+  // ✅ En garanti tespit:
+  // Mouse hareketi/hover algılarsak desktop'a geç
+  useEffect(() => {
+    if (!open) return;
+
+    const markDesktop = () => setIsMobile(false);
+    const markTouch = () => setIsMobile(true);
+
+    // pointer: mouse gelirse desktop
+    const onPointerMove = (e) => {
+      if (e.pointerType === "mouse") markDesktop();
+    };
+    const onMouseMove = () => markDesktop();
+
+    // touch gelirse mobile
+    const onTouchStart = () => markTouch();
+
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("touchstart", onTouchStart);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) {
+      setEvadeCount(0);
+      setCanClick(false);
+      setOffset({ x: 0, y: 0 });
+    }
+  }, [open]);
+
+  const tryEvade = (forceDesktop = false) => {
+  // ✅ mouse ile geldiysek desktop kabul et
+  if (forceDesktop) setIsMobile(false);
+
+  // ✅ state setIsMobile async olduğu için anlık kontrol:
+  if (isMobile && !forceDesktop) return;
+  if (canClick) return;
+
+  if (evadeCount < 3) {
+    const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    setOffset({ x: rand(-110, 110), y: rand(-55, 55) });
+    setEvadeCount((c) => c + 1);
+    return;
+  }
+
+  setOffset({ x: 0, y: 0 });
+  setCanClick(true);
+};
+
+  if (!open) return null;
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        key="support-modal"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+        // ❌ ARTIK DIŞARI TIKLAYINCA KAPANMA YOK
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95, y: 10 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.98, y: 10 }}
+          transition={{ type: "spring", stiffness: 280, damping: 22 }}
+          className="w-full max-w-md rounded-2xl border border-slate-700 bg-slate-950/90 shadow-2xl"
+        >
+          <div className="p-6 sm:p-7">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h3 className="text-lg sm:text-xl font-semibold text-white">Minik bir ara ☕</h3>
+                <p className="text-slate-300 mt-2 text-sm leading-relaxed">
+                  Eğer developer’ımızı daha da istekli çalıştırmak (ve projeyi ayakta tutmak) istersen,
+                  aşağıdaki IBAN’a dilediğin kadar “kahve parası” bırakabilirsin.
+                </p>
+              </div>
+
+              {/* ❌ X ile kapatma istemiyorsun diye kaldırdım.
+                  İstersen kalsın ama kapatmasın diye boş bırakırız. */}
+            </div>
+
+            <div className="mt-5 rounded-xl border border-slate-700 bg-slate-900/60 p-4">
+              <div className="text-xs text-slate-400">IBAN</div>
+              <div className="mt-1 font-mono text-sm sm:text-base text-white break-all">
+                TR87 0001 0021 9965 6721 5350 06
+              </div>
+            </div>
+
+            <div className="mt-6">
+              {/* ✅ Kaçma tetikleyicisini butondan alıp wrapper’a taşıyoruz (EN GARANTİ) */}
+              <div
+  className="relative flex justify-center"
+  onMouseEnter={() => tryEvade(true)}
+  onMouseMove={() => tryEvade(true)}
+  onPointerEnter={(e) => {
+    if (e.pointerType === "mouse") tryEvade(true);
+  }}
+  onPointerMove={(e) => {
+    if (e.pointerType === "mouse") tryEvade(true);
+  }}
+>
+                <motion.button
+                  type="button"
+                  onClick={() => {
+                    // ✅ SADECE BUTONLA KAPANACAK
+                    // mobil: direkt
+                    if (isMobile) return onProceed?.();
+                    // desktop: kaçma bitmeden tıklanmasın
+                    if (!canClick) return;
+                    onProceed?.();
+                  }}
+                  animate={{ x: offset.x, y: offset.y }}
+                  transition={{ type: "spring", stiffness: 520, damping: 22 }}
+                  style={{ willChange: "transform" }}
+                  className={`
+                    inline-flex items-center justify-center gap-2
+                    rounded-xl px-5 py-2.5 text-sm font-semibold
+                    shadow-md transition
+                    ${
+                      isMobile || canClick
+                        ? "bg-emerald-400 text-slate-950 hover:brightness-110"
+                        : "bg-slate-800 text-slate-200 hover:bg-slate-700"
+                    }
+                  `}
+                >
+                  Teklifleri Gör {isMobile ? "" : canClick ? "✅" : "(yakala!)"}
+                  <ArrowRight className="w-4 h-4" />
+                </motion.button>
+              </div>
+
+              {!isMobile && !canClick && (
+                <p className="mt-3 text-center text-xs text-slate-400">
+                  İpucu: Butona yaklaş… ama o da sana yaklaşsın 😄
+                </p>
+              )}
+            </div>
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
+
 function LoadingState() {
   const steps = useMemo(
     () => [
@@ -139,6 +296,24 @@ function OfferCard({ offer, index, isBest }) {
 }
 
 export default function OffersDisplay({ offers = [], isLoading = false, onReset }) {
+  const [showSupport, setShowSupport] = useState(false);
+  const [allowShowOffers, setAllowShowOffers] = useState(false);
+
+  // Yeni istek başladığında kapıyı sıfırla (reset / yeni değerlendirme senaryosu)
+  useEffect(() => {
+    if (isLoading || !Array.isArray(offers) || offers.length === 0) {
+      setShowSupport(false);
+      setAllowShowOffers(false);
+    }
+  }, [isLoading, offers]);
+
+  // Spinner bittikten SONRA (offers geldiyse) araya modal girsin
+  useEffect(() => {
+    if (!isLoading && Array.isArray(offers) && offers.length > 0 && !allowShowOffers) {
+      setShowSupport(true);
+    }
+  }, [isLoading, offers, allowShowOffers]);
+
   if (isLoading) return <LoadingState />;
 
   if (!Array.isArray(offers) || offers.length === 0) {
@@ -157,43 +332,54 @@ export default function OffersDisplay({ offers = [], isLoading = false, onReset 
   };
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-6xl mx-auto space-y-10">
-      <div className="text-center">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", bounce: 0.5 }}
-          className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-400/10 mb-4"
-        >
-          <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+    <>
+      <SupportModal
+  open={showSupport && !allowShowOffers}
+  onClose={() => {}}
+  onProceed={() => {
+    setShowSupport(false);
+    setAllowShowOffers(true);
+  }}
+/>
+
+      {allowShowOffers && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="max-w-6xl mx-auto space-y-10">
+          <div className="text-center">
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", bounce: 0.5 }}
+              className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-400/10 mb-4"
+            >
+              <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+            </motion.div>
+
+            <h2 className="text-2xl font-semibold text-white">{offers.length} Teklif getirildi</h2>
+            <p className="text-slate-400 mt-2">
+              Ortalama değer:{" "}
+              <span className="font-semibold text-white">{Math.round(avgPrice).toLocaleString("tr-TR")} TL</span>
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {offers.map((offer, index) => (
+              <OfferCard key={offer.siteName} offer={offer} index={index} isBest={isBest(offer)} />
+            ))}
+          </div>
+
+          {onReset && (
+            <div className="flex justify-center pt-6 border-t border-slate-700">
+              <button
+                onClick={onReset}
+                className="flex items-center gap-2 text-slate-400 hover:text-white transition text-sm"
+              >
+                <RefreshCcw className="w-4 h-4" />
+                Yeni değerlendirme yap
+              </button>
+            </div>
+          )}
         </motion.div>
-
-        <h2 className="text-2xl font-semibold text-white">{offers.length} Teklif getirildi</h2>
-        <p className="text-slate-400 mt-2">
-          Ortalama değer:{" "}
-          <span className="font-semibold text-white">{Math.round(avgPrice).toLocaleString("tr-TR")} TL</span>
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {offers.map((offer, index) => (
-          <OfferCard
-            key={offer.siteName}
-            offer={offer}
-            index={index}
-            isBest={isBest(offer)}
-          />
-        ))}
-      </div>
-
-      {onReset && (
-        <div className="flex justify-center pt-6 border-t border-slate-700">
-          <button onClick={onReset} className="flex items-center gap-2 text-slate-400 hover:text-white transition text-sm">
-            <RefreshCcw className="w-4 h-4" />
-            Yeni değerlendirme yap
-          </button>
-        </div>
       )}
-    </motion.div>
+    </>
   );
 }
