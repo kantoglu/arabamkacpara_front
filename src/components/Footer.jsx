@@ -4,7 +4,7 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto px-4 py-10 flex flex-col md:flex-row items-center justify-between gap-4">
         <div>
           <p className="text-slate-300 font-medium">
-            © {new Date().getFullYear()} Arabam Kaç Para
+            © {new Date().getFullYear()} Araban Kaç Para
           </p>
           <p className="text-xs text-slate-500">
             Tüm hakları saklıdır • Güvenilir platformlardan alınan fiyat verileri

@@ -73,19 +73,32 @@ export default function StepTramer({ formData, updateField }) {
           <label className="block text-sm font-medium text-amber-800 dark:text-amber-300 mb-3">
             Tramer Tutarı (TL)
           </label>
+
           <div className="relative">
             <span className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-600 dark:text-amber-400 font-medium">
               ₺
             </span>
+
+            {/* ✅ FIX: arka plan koyu + yazı beyaz (tema fark etmez) */}
             <input
               type="number"
               placeholder="örn: 25000"
               value={formData.tramer.tutar}
               onChange={(e) => updateField("tramer.tutar", e.target.value)}
-              className="w-full pl-10 pr-4 py-3 rounded-xl border border-amber-300 dark:border-amber-700 bg-white dark:bg-card text-white outline-none focus:ring-2 focus:ring-amber-500/50"
+              className="
+                w-full pl-10 pr-4 py-3 rounded-xl
+                border border-amber-300/70 dark:border-amber-700/70
+                bg-slate-950/60 text-white
+                placeholder:text-slate-400
+                caret-white
+                outline-none focus:ring-2 focus:ring-amber-500/50
+              "
             />
           </div>
-          <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">TRAMER sisteminden öğrenebilirsiniz.</p>
+
+          <p className="mt-2 text-xs text-amber-600 dark:text-amber-400">
+            TRAMER sisteminden öğrenebilirsiniz.
+          </p>
         </div>
       )}
 

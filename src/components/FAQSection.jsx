@@ -23,12 +23,12 @@ function FaqItem({ index, question, children, isOpen, onToggle }) {
         {/* plus → x */}
         <span className="relative inline-flex h-6 w-6 items-center justify-center text-slate-300">
           <span
-            className={`absolute h-[2px] w-5 bg-current transition-transform duration-500 ${
+            className={`absolute h-[2px] w-5 bg-current transition-transform duration-500 ease-in-out ${
               isOpen ? "rotate-45" : ""
             }`}
           />
           <span
-            className={`absolute w-[2px] h-5 bg-current transition-transform duration-500 ${
+            className={`absolute w-[2px] h-5 bg-current transition-transform duration-500 ease-in-out ${
               isOpen ? "-rotate-45" : ""
             }`}
           />
@@ -41,7 +41,9 @@ function FaqItem({ index, question, children, isOpen, onToggle }) {
       >
         <div
           ref={contentRef}
-          className="px-6 md:px-8 pb-6 text-slate-300 leading-relaxed text-sm md:text-base"
+          className={`px-6 md:px-8 pb-6 text-slate-300 leading-relaxed text-sm md:text-base transition-all duration-500 ease-in-out ${
+            isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1"
+          }`}
         >
           {children}
         </div>
@@ -87,6 +89,11 @@ export default function FaqSection() {
 
   const [active, setActive] = useState(null);
 
+  // ✅ aynı soruya tekrar basınca kapansın
+  const handleToggle = (i) => {
+    setActive((prev) => (prev === i ? null : i));
+  };
+
   return (
     <section className="relative bg-gradient-to-b from-slate-950 to-slate-900 text-white">
       <div className="max-w-7xl mx-auto px-6 py-24">
@@ -111,7 +118,7 @@ export default function FaqSection() {
             </h2>
 
             <p className="mt-6 text-slate-300 max-w-xl text-base md:text-lg">
-              Arabanı satmadan önce aklına takılan her şey burada.  
+              Arabanı satmadan önce aklına takılan her şey burada.
               Hızlı, güvenilir ve şeffaf bir teklif süreci sunuyoruz.
             </p>
           </div>
@@ -124,7 +131,7 @@ export default function FaqSection() {
                 index={i}
                 question={f.q}
                 isOpen={active === i}
-                onToggle={setActive}
+                onToggle={handleToggle}
               >
                 {f.a}
               </FaqItem>

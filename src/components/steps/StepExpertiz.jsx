@@ -4,6 +4,9 @@ import { Info, Check } from "lucide-react";
 export default function StepExpertiz({ formData, updateField }) {
   const [hoveredPart, setHoveredPart] = useState(null);
 
+  // ✅ Sabit kutu için: en son hoverlanan parça
+  const [activePart, setActivePart] = useState(null);
+
   const expertizOptions = [
     { value: "1", label: "Orijinal", color: "#10b981" },
     { value: "2", label: "Boyalı", color: "#f59e0b" },
@@ -55,6 +58,12 @@ export default function StepExpertiz({ formData, updateField }) {
 
   const cycleValue = (current) => (current === "1" ? "2" : current === "2" ? "3" : "1");
 
+  // ✅ hover helper (kutu sabit kalsın diye activePart'ı da set ediyoruz)
+  const onHoverPart = (key) => {
+    setHoveredPart(key);
+    setActivePart(key);
+  };
+
   const SelectCell = ({ partKey, value }) => {
     const active = getPartValue(partKey) === value;
     const opt = expertizOptions.find((o) => o.value === value);
@@ -79,14 +88,17 @@ export default function StepExpertiz({ formData, updateField }) {
     );
   };
 
+  // ✅ Sabit kutu içeriği: hover varsa hover, yoksa "Bir parça seçin"
+  const displayKey = hoveredPart || null;
+  const displayLabel = displayKey ? carParts.find((p) => p.key === displayKey)?.label : null;
+  const displayStatus = displayKey ? getPartStatus(displayKey) : null;
+
   return (
     <div className="space-y-4">
       {/* Header */}
       <div>
         <h2 className="text-xl font-semibold text-white mb-1">Ekspertiz Durumu</h2>
-        <p className="text-sm text-slate-400">
-          Krokiden veya listeden parça durumlarını belirleyin
-        </p>
+        <p className="text-sm text-slate-400">Krokiden veya listeden parça durumlarını belirleyin</p>
       </div>
 
       {/* Info */}
@@ -116,9 +128,8 @@ export default function StepExpertiz({ formData, updateField }) {
           <div className="relative">
             <svg
               width="100%"
-              height="auto"
               viewBox="0 0 227 303"
-              className="max-h-[400px]"
+              className="max-h-[400px] h-auto"
               xmlns="http://www.w3.org/2000/svg"
             >
               <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
@@ -142,7 +153,7 @@ export default function StepExpertiz({ formData, updateField }) {
                       transform="translate(112.000000, 16.000000) rotate(-90.000000) translate(-112.000000, -16.000000)"
                       className="cursor-pointer transition-all hover:opacity-80"
                       onClick={() => updateExpertiz("OnTampon", cycleValue(getPartValue("OnTampon")))}
-                      onMouseEnter={() => setHoveredPart("OnTampon")}
+                      onMouseEnter={() => onHoverPart("OnTampon")}
                       onMouseLeave={() => setHoveredPart(null)}
                     />
 
@@ -155,10 +166,8 @@ export default function StepExpertiz({ formData, updateField }) {
                       fillRule="nonzero"
                       transform="translate(112.000000, 88.500000) rotate(-90.000000) translate(-112.000000, -88.500000)"
                       className="cursor-pointer transition-all hover:opacity-80"
-                      onClick={() =>
-                        updateExpertiz("MotorKaputu", cycleValue(getPartValue("MotorKaputu")))
-                      }
-                      onMouseEnter={() => setHoveredPart("MotorKaputu")}
+                      onClick={() => updateExpertiz("MotorKaputu", cycleValue(getPartValue("MotorKaputu")))}
+                      onMouseEnter={() => onHoverPart("MotorKaputu")}
                       onMouseLeave={() => setHoveredPart(null)}
                     />
 
@@ -172,7 +181,7 @@ export default function StepExpertiz({ formData, updateField }) {
                       transform="translate(111.500000, 175.500000) rotate(-90.000000) translate(-111.500000, -175.500000)"
                       className="cursor-pointer transition-all hover:opacity-80"
                       onClick={() => updateExpertiz("Tavan", cycleValue(getPartValue("Tavan")))}
-                      onMouseEnter={() => setHoveredPart("Tavan")}
+                      onMouseEnter={() => onHoverPart("Tavan")}
                       onMouseLeave={() => setHoveredPart(null)}
                     />
 
@@ -185,10 +194,8 @@ export default function StepExpertiz({ formData, updateField }) {
                       fillRule="nonzero"
                       transform="translate(112.000000, 239.000000) rotate(-90.000000) translate(-112.000000, -239.000000)"
                       className="cursor-pointer transition-all hover:opacity-80"
-                      onClick={() =>
-                        updateExpertiz("ArkaKaput", cycleValue(getPartValue("ArkaKaput")))
-                      }
-                      onMouseEnter={() => setHoveredPart("ArkaKaput")}
+                      onClick={() => updateExpertiz("ArkaKaput", cycleValue(getPartValue("ArkaKaput")))}
+                      onMouseEnter={() => onHoverPart("ArkaKaput")}
                       onMouseLeave={() => setHoveredPart(null)}
                     />
 
@@ -201,10 +208,8 @@ export default function StepExpertiz({ formData, updateField }) {
                       fillRule="nonzero"
                       transform="translate(112.000000, 286.000000) rotate(-90.000000) translate(-112.000000, -286.000000)"
                       className="cursor-pointer transition-all hover:opacity-80"
-                      onClick={() =>
-                        updateExpertiz("ArkaTampon", cycleValue(getPartValue("ArkaTampon")))
-                      }
-                      onMouseEnter={() => setHoveredPart("ArkaTampon")}
+                      onClick={() => updateExpertiz("ArkaTampon", cycleValue(getPartValue("ArkaTampon")))}
+                      onMouseEnter={() => onHoverPart("ArkaTampon")}
                       onMouseLeave={() => setHoveredPart(null)}
                     />
 
@@ -218,10 +223,8 @@ export default function StepExpertiz({ formData, updateField }) {
                         fillRule="nonzero"
                         transform="translate(29.500000, 141.000000) rotate(-90.000000) translate(-29.500000, -141.000000)"
                         className="cursor-pointer transition-all hover:opacity-80"
-                        onClick={() =>
-                          updateExpertiz("SagArkaKapi", cycleValue(getPartValue("SagArkaKapi")))
-                        }
-                        onMouseEnter={() => setHoveredPart("SagArkaKapi")}
+                        onClick={() => updateExpertiz("SagArkaKapi", cycleValue(getPartValue("SagArkaKapi")))}
+                        onMouseEnter={() => onHoverPart("SagArkaKapi")}
                         onMouseLeave={() => setHoveredPart(null)}
                       />
                       <path
@@ -232,10 +235,8 @@ export default function StepExpertiz({ formData, updateField }) {
                         fillRule="nonzero"
                         transform="translate(29.000000, 93.000000) rotate(-90.000000) translate(-29.000000, -93.000000)"
                         className="cursor-pointer transition-all hover:opacity-80"
-                        onClick={() =>
-                          updateExpertiz("SagOnKapi", cycleValue(getPartValue("SagOnKapi")))
-                        }
-                        onMouseEnter={() => setHoveredPart("SagOnKapi")}
+                        onClick={() => updateExpertiz("SagOnKapi", cycleValue(getPartValue("SagOnKapi")))}
+                        onMouseEnter={() => onHoverPart("SagOnKapi")}
                         onMouseLeave={() => setHoveredPart(null)}
                       />
                       <path
@@ -247,12 +248,9 @@ export default function StepExpertiz({ formData, updateField }) {
                         transform="translate(34.500000, 182.500000) rotate(-90.000000) translate(-34.500000, -182.500000)"
                         className="cursor-pointer transition-all hover:opacity-80"
                         onClick={() =>
-                          updateExpertiz(
-                            "SagArkaCamurluk",
-                            cycleValue(getPartValue("SagArkaCamurluk"))
-                          )
+                          updateExpertiz("SagArkaCamurluk", cycleValue(getPartValue("SagArkaCamurluk")))
                         }
-                        onMouseEnter={() => setHoveredPart("SagArkaCamurluk")}
+                        onMouseEnter={() => onHoverPart("SagArkaCamurluk")}
                         onMouseLeave={() => setHoveredPart(null)}
                       />
                       <path
@@ -263,13 +261,8 @@ export default function StepExpertiz({ formData, updateField }) {
                         fillRule="nonzero"
                         transform="translate(41.500000, 34.500000) scale(-1, 1) rotate(-90.000000) translate(-41.500000, -34.500000)"
                         className="cursor-pointer transition-all hover:opacity-80"
-                        onClick={() =>
-                          updateExpertiz(
-                            "SagOnCamurluk",
-                            cycleValue(getPartValue("SagOnCamurluk"))
-                          )
-                        }
-                        onMouseEnter={() => setHoveredPart("SagOnCamurluk")}
+                        onClick={() => updateExpertiz("SagOnCamurluk", cycleValue(getPartValue("SagOnCamurluk")))}
+                        onMouseEnter={() => onHoverPart("SagOnCamurluk")}
                         onMouseLeave={() => setHoveredPart(null)}
                       />
                     </g>
@@ -287,10 +280,8 @@ export default function StepExpertiz({ formData, updateField }) {
                         fillRule="nonzero"
                         transform="translate(29.500000, 141.000000) rotate(-90.000000) translate(-29.500000, -141.000000)"
                         className="cursor-pointer transition-all hover:opacity-80"
-                        onClick={() =>
-                          updateExpertiz("SolArkaKapi", cycleValue(getPartValue("SolArkaKapi")))
-                        }
-                        onMouseEnter={() => setHoveredPart("SolArkaKapi")}
+                        onClick={() => updateExpertiz("SolArkaKapi", cycleValue(getPartValue("SolArkaKapi")))}
+                        onMouseEnter={() => onHoverPart("SolArkaKapi")}
                         onMouseLeave={() => setHoveredPart(null)}
                       />
                       <path
@@ -301,10 +292,8 @@ export default function StepExpertiz({ formData, updateField }) {
                         fillRule="nonzero"
                         transform="translate(29.000000, 93.000000) rotate(-90.000000) translate(-29.000000, -93.000000)"
                         className="cursor-pointer transition-all hover:opacity-80"
-                        onClick={() =>
-                          updateExpertiz("SolOnKapi", cycleValue(getPartValue("SolOnKapi")))
-                        }
-                        onMouseEnter={() => setHoveredPart("SolOnKapi")}
+                        onClick={() => updateExpertiz("SolOnKapi", cycleValue(getPartValue("SolOnKapi")))}
+                        onMouseEnter={() => onHoverPart("SolOnKapi")}
                         onMouseLeave={() => setHoveredPart(null)}
                       />
                       <path
@@ -316,12 +305,9 @@ export default function StepExpertiz({ formData, updateField }) {
                         transform="translate(34.500000, 182.500000) rotate(-90.000000) translate(-34.500000, -182.500000)"
                         className="cursor-pointer transition-all hover:opacity-80"
                         onClick={() =>
-                          updateExpertiz(
-                            "SolArkaCamurluk",
-                            cycleValue(getPartValue("SolArkaCamurluk"))
-                          )
+                          updateExpertiz("SolArkaCamurluk", cycleValue(getPartValue("SolArkaCamurluk")))
                         }
-                        onMouseEnter={() => setHoveredPart("SolArkaCamurluk")}
+                        onMouseEnter={() => onHoverPart("SolArkaCamurluk")}
                         onMouseLeave={() => setHoveredPart(null)}
                       />
                       <path
@@ -332,13 +318,8 @@ export default function StepExpertiz({ formData, updateField }) {
                         fillRule="nonzero"
                         transform="translate(41.500000, 34.500000) scale(-1, 1) rotate(-90.000000) translate(-41.500000, -34.500000)"
                         className="cursor-pointer transition-all hover:opacity-80"
-                        onClick={() =>
-                          updateExpertiz(
-                            "SolOnCamurluk",
-                            cycleValue(getPartValue("SolOnCamurluk"))
-                          )
-                        }
-                        onMouseEnter={() => setHoveredPart("SolOnCamurluk")}
+                        onClick={() => updateExpertiz("SolOnCamurluk", cycleValue(getPartValue("SolOnCamurluk")))}
+                        onMouseEnter={() => onHoverPart("SolOnCamurluk")}
                         onMouseLeave={() => setHoveredPart(null)}
                       />
                     </g>
@@ -347,20 +328,25 @@ export default function StepExpertiz({ formData, updateField }) {
               </g>
             </svg>
 
-            {hoveredPart && (
-              <div
-                className="mt-3 p-2 bg-slate-800 rounded border text-center"
-                style={{ borderColor: `${getPartStatus(hoveredPart).color}55` }}
-              >
-                <span className="text-sm font-semibold text-white">
-                  {carParts.find((p) => p.key === hoveredPart)?.label}
-                </span>
-                <span className="text-xs mx-2 text-slate-400">•</span>
-                <span className="text-sm font-bold" style={{ color: getPartStatus(hoveredPart).color }}>
-                  {getPartStatus(hoveredPart).label}
-                </span>
-              </div>
-            )}
+            {/* ✅ Sabit kutu: hep görünür, hover yoksa "Bir parça seçin" */}
+            <div
+              className="mt-3 p-2 bg-slate-800 rounded border text-center transition-colors"
+              style={{
+                borderColor: displayKey ? `${displayStatus.color}55` : "rgba(148,163,184,0.25)",
+              }}
+            >
+              {!displayKey ? (
+                <span className="text-sm text-slate-300">Bir parça seçin</span>
+              ) : (
+                <>
+                  <span className="text-sm font-semibold text-white">{displayLabel}</span>
+                  <span className="text-xs mx-2 text-slate-400">•</span>
+                  <span className="text-sm font-bold" style={{ color: displayStatus.color }}>
+                    {displayStatus.label}
+                  </span>
+                </>
+              )}
+            </div>
           </div>
 
           {/* Stats */}
@@ -398,14 +384,12 @@ export default function StepExpertiz({ formData, updateField }) {
                 <div
                   key={part.key}
                   className="rounded-md border border-slate-800 hover:border-slate-700 hover:bg-slate-800/40 transition-colors"
-                  onMouseEnter={() => setHoveredPart(part.key)}
+                  onMouseEnter={() => onHoverPart(part.key)}
                   onMouseLeave={() => setHoveredPart(null)}
                 >
                   <div className="grid grid-cols-[1fr_40px_40px_40px] items-center gap-2 px-2 py-1.5">
                     <div className="min-w-0">
-                      <div className="text-[12px] font-medium text-white truncate">
-                        {part.label}
-                      </div>
+                      <div className="text-[12px] font-medium text-white truncate">{part.label}</div>
                       <div className="text-[10px]" style={{ color: status.color }}>
                         {status.label}
                       </div>

@@ -1,6 +1,7 @@
 import HeroSection from "../components/HeroSection";
 import HowItWorksSection from "../components/HowItWorksSection";
 import WhyUsSection from "../components/WhyUsSection";
+import AppDownloadSection from "../components/AppDownloadSection";
 
 export default function HomePage() {
   return (
@@ -8,6 +9,7 @@ export default function HomePage() {
         <HeroSection />
         <HowItWorksSection />
         <WhyUsSection />
+        <AppDownloadSection />
     </div>
   );
 }

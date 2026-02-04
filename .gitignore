@@ -23,6 +23,8 @@ dist-ssr
 # Local environment files
 *.local
 .env
+.env.development
+.env.production
 .env.*          # Örn: .env.development, .env.production
 
 # Editor directories and files
