@@ -48,6 +48,7 @@ const initialFormData = {
     MotorKaputu: "1",
     OnTampon: "1",
     ArkaTampon: "1",
+    SolArkaKapi: "1",
   },
   tramer: { value: "", tutar: "" },
   adSoyad: "",
@@ -241,6 +242,8 @@ export default function CarFormWizard({ onSuccess, setLoading, onStart }) {
 
     // ✅ submit öncesi full validation
     if (!validateAllBeforeSubmit()) return;
+
+    
 
     setSubmitting(true);
     await sleep(BUTTON_SPINNER_MS);

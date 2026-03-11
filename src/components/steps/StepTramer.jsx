@@ -1,3 +1,5 @@
+"use client";
+
 import { AlertTriangle, CheckCircle, HelpCircle, XCircle } from "lucide-react";
 
 export default function StepTramer({ formData, updateField }) {
@@ -32,6 +34,15 @@ export default function StepTramer({ formData, updateField }) {
     },
   ];
 
+  // Seçim değiştiğinde tramer object’ini güncelle
+  const handleTramerSelect = (selectedValue) => {
+    updateField("tramer", {
+      value: selectedValue,
+      // Tramer Var (1) ise mevcut tutarı koru, diğer seçeneklerde null
+      tutar: selectedValue === "1" ? formData.tramer.tutar : null,
+    });
+  };
+
   return (
     <div className="space-y-6 text-white">
       {/* Başlık */}
@@ -42,7 +53,7 @@ export default function StepTramer({ formData, updateField }) {
         </p>
       </div>
 
-      {/* ✅ SADECE BURASI KÜÇÜLDÜ */}
+      {/* Tramer Seçenekleri */}
       <div className="max-w-3xl mx-auto grid grid-cols-2 gap-4">
         {tramerOptions.map((option) => {
           const Icon = option.icon;
@@ -52,7 +63,7 @@ export default function StepTramer({ formData, updateField }) {
             <button
               key={option.value}
               type="button"
-              onClick={() => updateField("tramer.value", option.value)}
+              onClick={() => handleTramerSelect(option.value)}
               className={`p-5 rounded-xl border-2 transition-all text-left ${
                 isSelected
                   ? `${option.bg} ring-2 ring-offset-2 ring-primary/30`
@@ -83,8 +94,13 @@ export default function StepTramer({ formData, updateField }) {
             <input
               type="number"
               placeholder="örn: 25000"
-              value={formData.tramer.tutar}
-              onChange={(e) => updateField("tramer.tutar", e.target.value)}
+              value={formData.tramer.tutar || ""}
+              onChange={(e) =>
+                updateField("tramer", {
+                  ...formData.tramer,
+                  tutar: e.target.value ? Number(e.target.value) : null,
+                })
+              }
               className="
                 w-full pl-10 pr-4 py-3 rounded-xl
                 border border-amber-300/70 dark:border-amber-700/70
