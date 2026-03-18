@@ -56,7 +56,6 @@ function LoadingState() {
         <p className="text-slate-500 text-sm">Lütfen sayfayı kapatma.</p>
       </div>
 
-      {/* Skeleton cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6">
         {[1, 2, 3].map((i) => (
           <div key={i} className="bg-slate-900 rounded-2xl border border-slate-700 p-6">
@@ -140,14 +139,12 @@ function OfferCard({ offer, index, isBest }) {
 export default function OffersDisplay({ offers = [], isLoading = false, onReset }) {
   const [allowShowOffers, setAllowShowOffers] = useState(false);
 
-  // Yeni istek başladığında sıfırlama
   useEffect(() => {
     if (isLoading || !Array.isArray(offers) || offers.length === 0) {
       setAllowShowOffers(false);
     }
   }, [isLoading, offers]);
 
-  // "Teklifleri Gör" butonuna basınca direkt göster
   useEffect(() => {
     if (!isLoading && Array.isArray(offers) && offers.length > 0) {
       setAllowShowOffers(true);
@@ -160,13 +157,27 @@ export default function OffersDisplay({ offers = [], isLoading = false, onReset 
     return <div className="text-center py-12 text-slate-400">Teklif bulunamadı</div>;
   }
 
-  const avgPrice = offers.reduce((sum, o) => sum + Number(o?.price ?? o?.offer ?? 0), 0) / offers.length;
+  // 🔥 SIRALAMA BURADA
+  const sortedOffers = [...offers].sort((a, b) => {
+    if (a?.isBestOffer === true || a?.isBestOffer === "true") return -1;
+    if (b?.isBestOffer === true || b?.isBestOffer === "true") return 1;
 
-  const bestPrice = Math.max(...offers.map((o) => Number(o?.price ?? o?.offer ?? 0)));
+    const priceA = Number(a?.price ?? a?.offer ?? 0);
+    const priceB = Number(b?.price ?? b?.offer ?? 0);
+
+    return priceB - priceA;
+  });
+
+  const avgPrice =
+    sortedOffers.reduce((sum, o) => sum + Number(o?.price ?? o?.offer ?? 0), 0) /
+    sortedOffers.length;
+
+  const bestPrice = Math.max(
+    ...sortedOffers.map((o) => Number(o?.price ?? o?.offer ?? 0))
+  );
 
   const isBest = (o) => {
-    if (o?.isBestOffer === true) return true;
-    if (o?.isBestOffer === "true") return true;
+    if (o?.isBestOffer === true || o?.isBestOffer === "true") return true;
     return Number(o?.price ?? o?.offer ?? 0) === bestPrice;
   };
 
@@ -184,16 +195,26 @@ export default function OffersDisplay({ offers = [], isLoading = false, onReset 
               <CheckCircle2 className="w-8 h-8 text-emerald-400" />
             </motion.div>
 
-            <h2 className="text-2xl font-semibold text-white">{offers.length} Teklif getirildi</h2>
+            <h2 className="text-2xl font-semibold text-white">
+              {sortedOffers.length} Teklif getirildi
+            </h2>
+
             <p className="text-slate-400 mt-2">
               Ortalama değer:{" "}
-              <span className="font-semibold text-white">{Math.round(avgPrice).toLocaleString("tr-TR")} TL</span>
+              <span className="font-semibold text-white">
+                {Math.round(avgPrice).toLocaleString("tr-TR")} TL
+              </span>
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {offers.map((offer, index) => (
-              <OfferCard key={offer.siteName} offer={offer} index={index} isBest={isBest(offer)} />
+            {sortedOffers.map((offer, index) => (
+              <OfferCard
+                key={offer.siteName}
+                offer={offer}
+                index={index}
+                isBest={isBest(offer)}
+              />
             ))}
           </div>
 

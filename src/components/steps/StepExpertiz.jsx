@@ -72,11 +72,11 @@ export default function StepExpertiz({ formData, updateField }) {
         type="button"
         onClick={() => updateExpertiz(partKey, value)}
         className="
-          w-10 h-7 rounded-md border
-          inline-flex items-center justify-center
-          transition-all
-          active:scale-[0.98]
-        "
+  w-8 aspect-square rounded-md border
+  inline-flex items-center justify-center
+  transition-all
+  active:scale-[0.98]
+"
         style={{
           borderColor: active ? opt.color : "#334155",
           backgroundColor: active ? `${opt.color}22` : "transparent",
