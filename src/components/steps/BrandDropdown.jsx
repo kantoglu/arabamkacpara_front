@@ -30,7 +30,6 @@ export default function MarkaDropdown({ onMarkaSecti }) {
   );
 
   return (
-  
     <div className="relative w-full sm:max-w-sm mx-auto">
       <button
         type="button"
@@ -42,11 +41,13 @@ export default function MarkaDropdown({ onMarkaSecti }) {
           h-12
           px-4
           rounded-2xl
-          border border-white/10
-          bg-white/5
-          shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]
-          hover:bg-white/7
+          /* Light mode: Belirgin gri border ve beyaz arka plan | Dark mode: Şeffaf beyaz */
+          border border-slate-200 dark:border-white/10
+          bg-white dark:bg-white/5
+          shadow-[0_1px_2px_rgba(0,0,0,0.05)] dark:shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]
+          hover:bg-slate-50 dark:hover:bg-white/7
           transition
+          /* Yazı renkleri adaptif hale getirildi */
           text-slate-900 dark:text-white
         "
       >
@@ -63,12 +64,13 @@ export default function MarkaDropdown({ onMarkaSecti }) {
         <div
           className="
             absolute z-50 mt-2 w-full rounded-2xl
-            bg-white/90 dark:bg-slate-900/80 backdrop-blur-md
-            border border-slate-200/70 dark:border-slate-700/80
-            shadow-2xl overflow-hidden
+            /* Light mode: Saf beyaz | Dark mode: Koyu lacivert/siyah */
+            bg-white dark:bg-slate-900/95 backdrop-blur-md
+            border border-slate-200 dark:border-slate-700/80
+            shadow-xl dark:shadow-2xl overflow-hidden
           "
         >
-          <div className="p-2 border-b border-slate-200/70 dark:border-slate-700/80">
+          <div className="p-2 border-b border-slate-100 dark:border-slate-700/80">
             <div className="relative">
               <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
               <input
@@ -78,10 +80,12 @@ export default function MarkaDropdown({ onMarkaSecti }) {
                 placeholder="Ara..."
                 className="
                   w-full pl-9 pr-3 py-2.5 rounded-xl text-sm
-                  bg-white/80 dark:bg-slate-800/70
+                  /* Input arka planı light modda daha hafif gri */
+                  bg-slate-50 dark:bg-slate-800/70
                   text-slate-900 dark:text-white
                   placeholder:text-slate-400
                   focus:outline-none focus:ring-2 focus:ring-indigo-500/70
+                  border border-transparent focus:border-indigo-500/20
                 "
               />
             </div>
@@ -89,7 +93,7 @@ export default function MarkaDropdown({ onMarkaSecti }) {
 
           <div className="max-h-56 overflow-y-auto custom-scrollbar">
             {filtered.length === 0 ? (
-              <div className="px-4 py-3 text-sm text-slate-600 dark:text-slate-300">
+              <div className="px-4 py-3 text-sm text-slate-500 dark:text-slate-300">
                 Sonuç bulunamadı
               </div>
             ) : (
@@ -104,8 +108,10 @@ export default function MarkaDropdown({ onMarkaSecti }) {
                   }}
                   className="
                     w-full text-left px-4 py-3 text-sm
-                    text-slate-900 dark:text-white
-                    hover:bg-indigo-500/10 dark:hover:bg-indigo-500/20
+                    /* Light modda yazı rengi koyulaştırıldı, hover efekti eklendi */
+                    text-slate-700 dark:text-white
+                    hover:bg-indigo-50 dark:hover:bg-indigo-500/20
+                    hover:text-indigo-600 dark:hover:text-white
                     transition
                   "
                 >

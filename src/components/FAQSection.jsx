@@ -10,18 +10,17 @@ function FaqItem({ index, question, children, isOpen, onToggle }) {
   }, [isOpen]);
 
   return (
-    <div className="rounded-2xl bg-slate-900/70 border border-white/10 shadow-xl backdrop-blur-md">
+    <div className="rounded-2xl bg-secondary/70 dark:bg-secondary-dark/70 border border-border dark:border-border-dark shadow-xl backdrop-blur-md transition-colors">
       <button
         type="button"
         onClick={() => onToggle(index)}
         className="w-full text-left px-6 md:px-8 py-6 flex items-center justify-between gap-6"
       >
-        <span className="text-base md:text-lg font-semibold text-white">
+        <span className="text-base md:text-lg font-semibold text-foreground dark:text-foreground-dark transition-colors">
           {index + 1}. {question}
         </span>
 
-        {/* plus → x */}
-        <span className="relative inline-flex h-6 w-6 items-center justify-center text-slate-300">
+        <span className="relative inline-flex h-6 w-6 items-center justify-center text-muted-foreground dark:text-muted-foreground-dark transition-colors">
           <span
             className={`absolute h-[2px] w-5 bg-current transition-transform duration-500 ease-in-out ${
               isOpen ? "rotate-45" : ""
@@ -41,9 +40,10 @@ function FaqItem({ index, question, children, isOpen, onToggle }) {
       >
         <div
           ref={contentRef}
-          className={`px-6 md:px-8 pb-6 text-slate-300 leading-relaxed text-sm md:text-base transition-all duration-500 ease-in-out ${
-            isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1"
-          }`}
+          className={`px-6 md:px-8 pb-6 leading-relaxed text-sm md:text-base transition-all duration-500 ease-in-out
+            ${isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-1"}
+            text-muted-foreground dark:text-muted-foreground-dark
+          `}
         >
           {children}
         </div>
@@ -88,14 +88,10 @@ export default function FaqSection() {
   }, []);
 
   const [active, setActive] = useState(null);
-
-  // ✅ aynı soruya tekrar basınca kapansın
-  const handleToggle = (i) => {
-    setActive((prev) => (prev === i ? null : i));
-  };
+  const handleToggle = (i) => setActive((prev) => (prev === i ? null : i));
 
   return (
-    <section className="relative bg-gradient-to-b from-slate-950 to-slate-900 text-white">
+    <section className="relative bg-background dark:bg-background-dark text-foreground dark:text-foreground-dark transition-colors">
       <div className="max-w-7xl mx-auto px-6 py-24">
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           {/* Left */}
@@ -117,7 +113,7 @@ export default function FaqSection() {
               </span>
             </h2>
 
-            <p className="mt-6 text-slate-300 max-w-xl text-base md:text-lg">
+            <p className="mt-6 text-muted-foreground dark:text-muted-foreground-dark max-w-xl text-base md:text-lg transition-colors">
               Arabanı satmadan önce aklına takılan her şey burada.
               Hızlı, güvenilir ve şeffaf bir teklif süreci sunuyoruz.
             </p>
@@ -140,8 +136,8 @@ export default function FaqSection() {
         </div>
       </div>
 
-      {/* Glow – hero ile uyumlu */}
-      <div className="pointer-events-none absolute -bottom-24 left-0 right-0 h-72 bg-gradient-to-t from-indigo-500/10 to-transparent blur-3xl" />
+      {/* Glow */}
+      <div className="pointer-events-none absolute -bottom-24 left-0 right-0 h-72 bg-gradient-to-t from-primary/10 to-transparent blur-3xl transition-colors" />
     </section>
   );
 }

@@ -23,7 +23,7 @@ export default function StepIndicator({ steps, currentStep }) {
 
   return (
     <div className="space-y-3">
-      {/* ✅ MOBİL: sadece ikonlar (tıklanmaz) */}
+      {/* ✅ MOBİL: sadece ikonlar */}
       <div className="sm:hidden flex items-center justify-between gap-2">
         {steps.map((step, index) => {
           const isCompleted = index < currentStep;
@@ -35,13 +35,7 @@ export default function StepIndicator({ steps, currentStep }) {
               key={step.id}
               type="button"
               disabled
-              aria-label={step.label}
-              title={step.label}
-              className="
-                flex-1 flex items-center justify-center
-                py-2 rounded-xl
-                pointer-events-none cursor-default
-              "
+              className="flex-1 flex items-center justify-center py-2 rounded-xl pointer-events-none cursor-default"
             >
               <span
                 className={`
@@ -51,8 +45,9 @@ export default function StepIndicator({ steps, currentStep }) {
                     isCompleted
                       ? "bg-emerald-500/10 border-emerald-500/30"
                       : isActive
-                      ? "bg-primary/12 border-primary/35 shadow-[0_0_0_6px_rgba(59,130,246,0.08)]"
-                      : "bg-white/5 border-white/10"
+                      ? "bg-blue-600/10 border-blue-600/35 shadow-[0_0_0_6px_rgba(59,130,246,0.08)]"
+                      /* Light: bg-slate-100, Dark: bg-white/5 */
+                      : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10"
                   }
                 `}
               >
@@ -61,16 +56,16 @@ export default function StepIndicator({ steps, currentStep }) {
                     w-4.5 h-4.5 transition
                     ${
                       isCompleted
-                        ? "text-emerald-400"
+                        ? "text-emerald-500 dark:text-emerald-400"
                         : isActive
-                        ? "text-primary"
+                        ? "text-blue-600 dark:text-blue-400"
                         : "text-slate-400"
                     }
                   `}
                 />
 
                 {isCompleted && (
-                  <span className="absolute -right-1 -bottom-1 w-4.5 h-4.5 rounded-full bg-emerald-500 text-emerald-950 flex items-center justify-center shadow">
+                  <span className="absolute -right-1 -bottom-1 w-4.5 h-4.5 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow">
                     <Check className="w-3 h-3" />
                   </span>
                 )}
@@ -80,7 +75,7 @@ export default function StepIndicator({ steps, currentStep }) {
         })}
       </div>
 
-      {/* ✅ DESKTOP: ikon + label (tıklanmaz) */}
+      {/* ✅ DESKTOP: ikon + label */}
       <div className="hidden sm:flex items-center justify-between w-full">
         {steps.map((step, index) => {
           const isCompleted = index < currentStep;
@@ -92,13 +87,7 @@ export default function StepIndicator({ steps, currentStep }) {
               key={step.id}
               type="button"
               disabled
-              className="
-                group flex items-center gap-2.5 px-3 py-2 rounded-xl
-                whitespace-nowrap
-                pointer-events-none cursor-default
-              "
-              aria-label={step.label}
-              title={step.label}
+              className="group flex items-center gap-2.5 px-3 py-2 rounded-xl whitespace-nowrap pointer-events-none cursor-default"
             >
               <span
                 className={`
@@ -108,8 +97,8 @@ export default function StepIndicator({ steps, currentStep }) {
                     isCompleted
                       ? "bg-emerald-500/10 border-emerald-500/30"
                       : isActive
-                      ? "bg-primary/12 border-primary/35 shadow-[0_0_0_6px_rgba(59,130,246,0.08)]"
-                      : "bg-white/5 border-white/10"
+                      ? "bg-blue-600/10 border-blue-600/35 shadow-[0_0_0_6px_rgba(59,130,246,0.08)]"
+                      : "bg-slate-100 dark:bg-white/5 border-slate-200 dark:border-white/10"
                   }
                 `}
               >
@@ -118,16 +107,16 @@ export default function StepIndicator({ steps, currentStep }) {
                     w-4.5 h-4.5 transition
                     ${
                       isCompleted
-                        ? "text-emerald-400"
+                        ? "text-emerald-500 dark:text-emerald-400"
                         : isActive
-                        ? "text-primary"
+                        ? "text-blue-600 dark:text-blue-400"
                         : "text-slate-400"
                     }
                   `}
                 />
 
                 {isCompleted && (
-                  <span className="absolute -right-1 -bottom-1 w-4.5 h-4.5 rounded-full bg-emerald-500 text-emerald-950 flex items-center justify-center shadow">
+                  <span className="absolute -right-1 -bottom-1 w-4.5 h-4.5 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow">
                     <Check className="w-3 h-3" />
                   </span>
                 )}
@@ -138,9 +127,11 @@ export default function StepIndicator({ steps, currentStep }) {
                   text-sm font-semibold transition
                   ${
                     isCompleted
-                      ? "text-emerald-300"
+                      /* Light: emerald-600, Dark: emerald-300 */
+                      ? "text-emerald-600 dark:text-emerald-300"
                       : isActive
-                      ? "text-white"
+                      /* Light: slate-900, Dark: white */
+                      ? "text-slate-900 dark:text-white"
                       : "text-slate-400"
                   }
                 `}
@@ -153,9 +144,9 @@ export default function StepIndicator({ steps, currentStep }) {
       </div>
 
       {/* ✅ Progress bar */}
-      <div className="h-1.5 w-full rounded-full bg-white/5 overflow-hidden">
+      <div className="h-1.5 w-full rounded-full bg-slate-100 dark:bg-white/5 overflow-hidden">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-primary via-sky-400 to-emerald-400 transition-[width] duration-500"
+          className="h-full rounded-full bg-gradient-to-r from-blue-500 via-sky-400 to-emerald-400 transition-[width] duration-500"
           style={{ width: `${percent}%` }}
         />
       </div>

@@ -2,37 +2,37 @@
 @tailwind components;
 @tailwind utilities;
 
-
 /* ------------------ OKLCH CUSTOM THEME ------------------ */
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(0.97 0.005 250);
-  --foreground: oklch(0.2 0.02 260);
-  --card: oklch(0.99 0.002 250);
-  --card-foreground: oklch(0.2 0.02 260);
-  --popover: oklch(0.99 0.002 250);
-  --popover-foreground: oklch(0.2 0.02 260);
+  /* Light Mode - Kontrastı artırılmış ve temiz */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.15 0.02 260); 
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.15 0.02 260);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.15 0.02 260);
   --primary: oklch(0.55 0.25 265);
-  --primary-foreground: oklch(0.99 0 0);
+  --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.96 0.01 260);
   --secondary-foreground: oklch(0.25 0.02 260);
   --muted: oklch(0.95 0.01 260);
-  --muted-foreground: oklch(0.5 0.02 260);
+  --muted-foreground: oklch(0.4 0.02 260); 
   --accent: oklch(0.95 0.02 260);
   --accent-foreground: oklch(0.25 0.02 260);
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.99 0 0);
-  --border: oklch(0.9 0.01 260);
-  --input: oklch(0.9 0.01 260);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.92 0.01 260);
+  --input: oklch(0.92 0.01 260);
   --ring: oklch(0.55 0.25 265);
   --radius: 0.75rem;
 
-  /* ✅ Marquee hız kontrolü (küçük = daha hızlı) */
-  --marquee-duration: 18s; /* daha hızlı: 12s | daha yavaş: 28s */
+  --marquee-duration: 18s;
 }
 
 .dark {
+  /* Dark Mode - Orijinal ayarlar korunmuştur */
   --background: oklch(0.13 0.02 260);
   --foreground: oklch(0.95 0.01 260);
   --card: oklch(0.17 0.02 260);
@@ -61,25 +61,8 @@
   }
 
   body {
-    background:
-      radial-gradient(
-        1200px circle at 0% 0%,
-        color-mix(in oklab, var(--primary) 18%, transparent),
-        transparent 45%
-      ),
-      radial-gradient(
-        900px circle at 100% 100%,
-        color-mix(in oklab, var(--primary) 12%, transparent),
-        transparent 50%
-      ),
-      linear-gradient(
-        135deg,
-        color-mix(in oklab, var(--background) 92%, var(--primary) 8%),
-        var(--background)
-      );
-
-    color: var(--foreground);
-    transition: background 600ms ease, color 300ms ease;
+    @apply bg-background text-foreground;
+    transition: background 300ms ease, color 300ms ease;
   }
 
   ::selection {
@@ -98,17 +81,22 @@
 /* ------------------ COMPONENTS ------------------ */
 @layer components {
   .card, .glass-card {
-    @apply bg-white/80 dark:bg-slate-800/60 backdrop-blur-md
+    @apply bg-white dark:bg-slate-800/60 backdrop-blur-md
            border border-slate-200 dark:border-slate-700
            rounded-2xl shadow-lg transition-all duration-500;
   }
 
   .input, .input-field {
     @apply w-full px-4 py-2.5 rounded-xl border border-slate-300
-           dark:border-slate-600 bg-white/80 dark:bg-slate-800/60
-           text-slate-800 dark:text-slate-100 placeholder-slate-400
+           dark:border-slate-600 bg-white dark:bg-slate-800 /* Şeffaflığı kaldırdık veya azalttık */
+           text-slate-900 dark:text-slate-100 placeholder-slate-400
            outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500
-           transition-all duration-300 shadow-sm dark:shadow-[inset_0_0_6px_rgba(0,0,0,0.4)];
+           transition-all duration-300 shadow-sm;
+  }
+
+  /* Seçim kutularının içindeki yazıların görünmeme sorununu çözer */
+  select.input-field {
+    @apply bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100;
   }
 
   .choice-btn, .choice-button {
@@ -134,15 +122,15 @@
   }
 
   .heading {
-    @apply text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4;
+    @apply text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4;
   }
 
   .subtext {
-    @apply text-sm text-gray-600 dark:text-gray-400;
+    @apply text-sm text-slate-600 dark:text-slate-400;
   }
 
   .form-section {
-    @apply card max-w-lg mx-auto mt-10;
+    @apply card max-w-lg mx-auto mt-10 p-6;
   }
 
   .theme-switch {
@@ -167,26 +155,23 @@
     @apply bg-gray-300 text-gray-600 dark:bg-slate-700 dark:text-slate-300;
   }
 
+  /* HATALI KISIM DÜZELTİLDİ: Scrollbar Ayarları */
   .custom-scrollbar::-webkit-scrollbar {
     width: 6px;
   }
 
   .custom-scrollbar::-webkit-scrollbar-track {
-    background: #1e293b; /* slate-800 */
+    @apply bg-slate-100 dark:bg-slate-900;
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #475569; /* slate-600 */
-    border-radius: 3px;
+    @apply bg-slate-300 dark:bg-slate-700 rounded-full hover:bg-slate-400 dark:hover:bg-slate-600;
   }
 
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #64748b; /* slate-500 */
-  }
-
+  /* Standart tarayıcı desteği */
   .custom-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: #475569 #1e293b;
+    scrollbar-color: #cbd5e1 transparent;
   }
 
   html, body {
@@ -195,7 +180,6 @@
 }
 
 /* ------------------ MARQUEE (AUTO SCROLL) ------------------ */
-/* sürekli akan slider */
 .marquee {
   user-select: none;
 }
@@ -218,17 +202,12 @@
   .marquee-track { animation: none; }
 }
 
-
-/* Premium underline: sağa sola kayan (shimmer) */
+/* Premium underline shimmer */
 .nav-underline {
   position: relative;
   display: inline-block;
-  color: rgb(226 232 240); /* slate-200 */
+  color: inherit; 
   transition: color 200ms ease;
-}
-
-.nav-underline:hover {
-  color: white;
 }
 
 .nav-underline::after {
@@ -239,17 +218,13 @@
   height: 2px;
   width: 100%;
   border-radius: 999px;
-
-  /* underline yokken gizli */
   transform: scaleX(0);
   transform-origin: left;
   opacity: 0;
-
-  /* premium gradient */
   background: linear-gradient(
     90deg,
     transparent,
-    color-mix(in oklab, var(--primary) 80%, white 20%),
+    var(--primary),
     transparent
   );
   transition: transform 220ms ease, opacity 220ms ease;
@@ -262,10 +237,6 @@
 }
 
 @keyframes navShimmer {
-  0% {
-    background-position: 0% 0%;
-  }
-  100% {
-    background-position: 200% 0%;
-  }
+  0% { background-position: 0% 0%; }
+  100% { background-position: 200% 0%; }
 }

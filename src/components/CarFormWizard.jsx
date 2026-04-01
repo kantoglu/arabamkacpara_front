@@ -296,27 +296,31 @@ export default function CarFormWizard({ onSuccess, setLoading, onStart }) {
 
   if (!markaSecildi) {
     return (
-     <div className="glass-card w-full md:max-w-md lg:max-w-lg mx-auto p-6 sm:p-10 flex flex-col items-center gap-6">
 
+  <div className="glass-card w-full md:max-w-md lg:max-w-lg mx-auto p-6 sm:p-10 flex flex-col items-center gap-6 bg-white dark:bg-slate-900/50 shadow-xl dark:shadow-none border border-slate-200 dark:border-white/10">
+    
+    {/* text-slate-900 (Light) / text-white (Dark) */}
+    <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+      Araç Markasını Seç
+    </h2>
+    
+    {/* text-slate-500 (Light) / text-slate-400 (Dark) */}
+    <p className="text-slate-500 dark:text-slate-400 text-sm text-center">
+      Devam etmek için önce marka seçmelisin
+    </p>
 
-        <h2 className="text-xl sm:text-2xl font-bold text-white">
-          Araç Markasını Seç
-        </h2>
-        <p className="text-slate-400 text-sm text-center">
-          Devam etmek için önce marka seçmelisin
-        </p>
-        <div className="w-full">
-          <MarkaDropdown onMarkaSecti={handleMarkaSecti} />
-        </div>
-      </div>
-    );
+    <div className="w-full">
+      <MarkaDropdown onMarkaSecti={handleMarkaSecti} />
+    </div>
+  </div>
+);
   }
 
   return (
-    <div className="glass-card w-full max-w-4xl mx-auto">
+    <div className="glass-card w-full max-w-4xl mx-auto overflow-hidden">
       <div ref={wizardTopRef} />
 
-      <div className="overflow-hidden">
+      
         {/* Step Indicator */}
         <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-700">
           <StepIndicator steps={steps} currentStep={currentStep} onStepClick={goToStep} />
@@ -337,10 +341,12 @@ export default function CarFormWizard({ onSuccess, setLoading, onStart }) {
             </motion.div>
           </AnimatePresence>
         </div>
-      </div>
+      
+
+      
 
       {/* Sticky Footer */}
-      <div className="sticky bottom-0 z-20 border-t border-slate-700 bg-slate-950/80 backdrop-blur-md pb-[env(safe-area-inset-bottom)]">
+      <div className="sticky bottom-0 z-20 border-t border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-950/80 backdrop-blur-md pb-[env(safe-area-inset-bottom)]">
         <div className="px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between gap-3 sm:gap-4">
           <button
             onClick={prevStep}
@@ -348,12 +354,9 @@ export default function CarFormWizard({ onSuccess, setLoading, onStart }) {
             className="
               inline-flex items-center gap-2
               rounded-xl px-3 sm:px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold
-              bg-slate-800 text-slate-200
-              border border-white/10
-              shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]
-              hover:bg-slate-700
-              active:translate-y-[1px]
-              active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)]
+              bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200
+              border border-slate-200 dark:border-white/10
+              hover:bg-slate-200 dark:hover:bg-slate-700
               transition
               disabled:opacity-50 disabled:cursor-not-allowed
             "
@@ -362,7 +365,7 @@ export default function CarFormWizard({ onSuccess, setLoading, onStart }) {
             Geri
           </button>
 
-          <span className="text-xs sm:text-sm text-slate-400 whitespace-nowrap">
+          <span className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400 whitespace-nowrap">
             {currentStep + 1} / {steps.length}
           </span>
 
@@ -373,13 +376,9 @@ export default function CarFormWizard({ onSuccess, setLoading, onStart }) {
               className="
                 inline-flex items-center gap-2
                 rounded-xl px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold
-                bg-emerald-500 text-emerald-950
-                shadow-md
-                hover:bg-emerald-400
-                active:translate-y-[1px]
-                active:shadow-sm
-                transition
-                disabled:opacity-60 disabled:cursor-not-allowed
+                bg-emerald-500 text-white dark:text-emerald-950
+                shadow-md hover:bg-emerald-600 dark:hover:bg-emerald-400
+                transition disabled:opacity-60
               "
             >
               İleri
@@ -392,19 +391,15 @@ export default function CarFormWizard({ onSuccess, setLoading, onStart }) {
               className="
                 inline-flex items-center gap-2
                 rounded-xl px-4 sm:px-5 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold
-                bg-emerald-500 text-emerald-950
-                shadow-md
-                hover:bg-emerald-400
-                active:translate-y-[1px]
-                active:shadow-sm
-                transition
-                disabled:opacity-60 disabled:cursor-not-allowed
+                bg-emerald-500 text-white dark:text-emerald-950
+                shadow-md hover:bg-emerald-600 dark:hover:bg-emerald-400
+                transition disabled:opacity-60
               "
             >
               {submitting ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Teklifler hazırlanıyor…
+                  Hazırlanıyor…
                 </>
               ) : (
                 <>
