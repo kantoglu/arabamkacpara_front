@@ -72,57 +72,56 @@ export default function Header({ theme, setTheme }) {
 
   return (
     <header className={`fixed inset-x-0 top-0 z-50 backdrop-blur-xl border-b transition-colors duration-500 ${bgHeader} ${textHeader}`}>
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="h-16 flex items-center justify-between overflow-hidden">
+      <div className="max-w-6xl mx-auto px-2 md:px-4">
+        <div className="h-16 flex items-center justify-between">
 
-          {/* LOGO AREA */}
-          <div className="flex items-center h-16">
+          {/* LOGO & TEXT AREA (Mobilde en solda) */}
+          <div className="flex items-center h-16 min-w-0 flex-shrink justify-start -ml-1 md:ml-0">
             {isHome ? (
-              <a href="#home" className="flex items-center h-full" onClick={handleAnchorClick("#home")}>
+              <a href="#home" className="flex items-center h-full flex-shrink-0" onClick={handleAnchorClick("#home")}>
                 <Logo theme={theme} />
               </a>
             ) : (
-              <Link to="/" className="flex items-center h-full">
+              <Link to="/" className="flex items-center h-full flex-shrink-0">
                 <Logo theme={theme} />
               </Link>
             )}
             
-            {/* DİKEY ÇİZGİ VE METİN - YERİ SABİTLENDİ */}
-            <div className="flex items-center gap-3 border-l-2 border-indigo-500/40 h-8 pl-4 ml-2 transition-colors duration-500">
-              <div className="flex flex-col justify-center">
-                <span className={`text-[15px] font-bold tracking-tight leading-tight transition-colors duration-500 ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
+            <div className="flex items-center gap-2 md:gap-3 border-l-2 border-indigo-500/40 h-8 pl-2 md:pl-4 ml-0 transition-colors duration-500 min-w-0">
+              <div className="flex flex-col justify-center overflow-hidden">
+                <span className={`text-[12px] sm:text-[13px] md:text-[15px] font-bold tracking-tight leading-tight transition-colors duration-500 truncate ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
                   Araban Kaç Para?
                 </span>
-                <span className={`text-[10px] font-medium transition-colors duration-500 uppercase tracking-widest ${theme === "dark" ? "text-slate-400" : "text-slate-500"}`}>
-                  Kurumsal teklif karşılaştırma
+                <span className={`text-[7px] sm:text-[8px] md:text-[10px] font-medium transition-colors duration-500 uppercase tracking-widest truncate ${theme === "dark" ? "text-slate-400" : "text-slate-500"}`}>
+                  Teklif Karşılaştır
                 </span>
               </div>
             </div>
           </div>
 
-          {/* NAV */}
-          {isHome && (
-            <nav className="hidden md:flex items-center gap-8 text-[13px] transition-colors duration-500">
-              {navItems.map((item) => (
-                <a
-                  key={item.href}
-                  href={item.href}
-                  onClick={handleAnchorClick(item.href)}
-                  className={`nav-underline px-1 py-2 transition-colors duration-500
-                    ${theme === "dark" ? "text-slate-200 hover:text-white" : "text-slate-900 hover:text-slate-900"}`}
-                >
-                  {item.label}
-                </a>
-              ))}
-            </nav>
-          )}
+          {/* DESKTOP NAV & SWITCHER (Masaüstü Menü Geri Geldi) */}
+          <div className="hidden md:flex items-center gap-10"> {/* Gap-10 ile menü ve switcher arasını açtık */}
+            {isHome && (
+              <nav className="flex items-center gap-8 text-[13px] transition-colors duration-500">
+                {navItems.map((item) => (
+                  <a
+                    key={item.href}
+                    href={item.href}
+                    onClick={handleAnchorClick(item.href)}
+                    className={`nav-underline px-1 py-2 transition-colors duration-500
+                      ${theme === "dark" ? "text-slate-200 hover:text-white" : "text-slate-900 hover:text-slate-900"}`}
+                  >
+                    {item.label}
+                  </a>
+                ))}
+              </nav>
+            )}
 
-          {/* RIGHT SIDE */}
-          <div className="flex items-center gap-3">
+            {/* Tema Switcher (Desktop) */}
             <div
               onClick={toggleTheme}
-              className={`relative w-14 h-7 flex items-center rounded-full cursor-pointer transition-all duration-500
-                ${theme === "dark" ? "bg-indigo-600" : "bg-slate-400/40"} hidden md:flex`}
+              className={`relative w-14 h-7 flex items-center rounded-full cursor-pointer transition-all duration-500 flex-shrink-0
+                ${theme === "dark" ? "bg-indigo-600" : "bg-slate-400/40"}`}
             >
               <div
                 className={`absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow-md
@@ -132,23 +131,26 @@ export default function Header({ theme, setTheme }) {
                 {theme === "dark" ? <Moon className="w-4 h-4 text-gray-800" /> : <Sun className="w-4 h-4 text-yellow-500" />}
               </div>
             </div>
+          </div>
 
+          {/* MOBILE BUTTON AREA */}
+          <div className="flex md:hidden items-center gap-2 flex-shrink-0 pr-1">
             {isHome && (
               <button
                 type="button"
                 onClick={() => setOpen((v) => !v)}
-                className={`md:hidden inline-flex items-center justify-center h-10 w-10 rounded-xl border
+                className={`inline-flex items-center justify-center h-10 w-10 rounded-xl border
                   ${theme === "dark" ? "border-white/10 bg-slate-900/60" : "border-slate-300 bg-white/60"} 
-                  text-slate-100 transition-colors duration-500`}
+                  transition-colors duration-500`}
               >
-                {open ? <X className="h-5 w-5 text-current" /> : <Menu className="h-5 w-5 text-current" />}
+                {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
             )}
           </div>
         </div>
       </div>
 
-      {/* MOBILE MENU */}
+      {/* MOBILE MENU (DREAWER) */}
       {isHome && (
         <div className={["md:hidden fixed inset-0 z-40", open ? "pointer-events-auto" : "pointer-events-none"].join(" ")}>
           <div className={["absolute inset-0 transition-opacity duration-500", open ? `opacity-100 ${mobileOverlay}` : "opacity-0"].join(" ")} />
@@ -180,7 +182,7 @@ export default function Header({ theme, setTheme }) {
                   href={item.href}
                   onClick={handleAnchorClick(item.href)}
                   className={`px-3 py-3 rounded-xl text-sm transition-colors duration-500 
-                    ${theme === "dark" ? "text-slate-200 hover:text-white" : "text-slate-900 hover:text-slate-900"} nav-underline`}
+                    ${theme === "dark" ? "text-slate-200 hover:text-white" : "text-slate-900 hover:text-slate-900"}`}
                 >
                   {item.label}
                 </a>
@@ -201,8 +203,7 @@ function Logo({ theme }) {
       <img 
         src={logoSrc} 
         alt="Logo" 
-        // Scale yerine yüksekliği kontrol ederek hizayı sabitledik
-        className="h-[200px] w-auto object-contain transition-all duration-500" 
+        className="h-[100px] md:h-[200px] w-auto object-contain transition-all duration-500" 
         draggable={false} 
       />
     </div>
