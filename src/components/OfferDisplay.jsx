@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trophy, ArrowRight, RefreshCcw, CheckCircle2, Search } from "lucide-react";
+import { Trophy, ArrowRight, RefreshCcw, CheckCircle2, Search, ShieldCheck } from "lucide-react";
 
 function LoadingState() {
   const steps = useMemo(
@@ -81,6 +81,9 @@ function LoadingState() {
 
 function OfferCard({ offer, index, isBest }) {
   const shownPrice = Number(offer?.price ?? offer?.offer ?? 0);
+  
+  // Sadece ilk iki teklif için ücretsiz ekspertiz ibaresi (index 0 ve 1)
+  const isFreeExpertise = index === 0 || index === 1;
 
   return (
     <motion.div
@@ -92,21 +95,38 @@ function OfferCard({ offer, index, isBest }) {
         ${isBest ? "border-emerald-400 shadow-lg shadow-emerald-400/20 bg-emerald-50 dark:bg-slate-900" : "border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-sm dark:shadow-none"}
       `}
     >
-      {isBest && (
-        <div className="absolute top-0 right-0">
+      {/* Üst Rozet Alanı */}
+      <div className="absolute top-0 right-0 flex flex-col items-end">
+        {isBest && (
           <div className="bg-emerald-400 text-slate-900 px-4 py-1.5 text-xs font-bold rounded-bl-xl flex items-center gap-1">
             <Trophy className="w-3 h-3" />
             En İyi Teklif
           </div>
-        </div>
-      )}
+        )}
+        
+        {isFreeExpertise && (
+          <div className={`px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-bl-lg shadow-sm border-l border-b border-white/20
+            ${isBest ? "bg-emerald-500 text-white" : "bg-indigo-500 text-white"}`}>
+            Ücretsiz Ekspertiz
+          </div>
+        )}
+      </div>
 
       <div className="p-6">
         <div className="mb-4">
           <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{offer.siteName}</h3>
-          <div className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400 mt-1">
-            <CheckCircle2 className="w-3 h-3 text-emerald-500 dark:text-emerald-400" />
-            Doğrulanmış Platform
+          <div className="flex flex-col gap-1.5 mt-1">
+            <div className="flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400">
+              <CheckCircle2 className="w-3 h-3 text-emerald-500 dark:text-emerald-400" />
+              Doğrulanmış Platform
+            </div>
+            
+            {isFreeExpertise && (
+              <div className="flex items-center gap-1.5 text-[11px] font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 w-fit px-2 py-0.5 rounded-full">
+                <ShieldCheck className="w-3 h-3" />
+                Ekspertiz ücreti bizden!
+              </div>
+            )}
           </div>
         </div>
 

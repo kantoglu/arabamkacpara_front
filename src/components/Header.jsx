@@ -20,14 +20,12 @@ export default function Header({ theme, setTheme }) {
     []
   );
 
-  // ESC ile menüyü kapat
   useEffect(() => {
     const onKey = (e) => e.key === "Escape" && setOpen(false);
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Dışarı tıklayınca menüyü kapat
   useEffect(() => {
     const onClick = (e) => {
       if (!open) return;
@@ -37,7 +35,6 @@ export default function Header({ theme, setTheme }) {
     return () => document.removeEventListener("mousedown", onClick);
   }, [open]);
 
-  // Menü açıkken body scroll kapat
   useEffect(() => {
     if (!open) return;
     const prev = document.body.style.overflow;
@@ -61,7 +58,6 @@ export default function Header({ theme, setTheme }) {
     history.replaceState(null, "", href);
   };
 
-  // Theme toggle
   const toggleTheme = () => {
     const newTheme = theme === "light" ? "dark" : "light";
     setTheme(newTheme);
@@ -69,7 +65,6 @@ export default function Header({ theme, setTheme }) {
     document.documentElement.classList.toggle("dark", newTheme === "dark");
   };
 
-  // Theme uyumlu sınıflar
   const bgHeader = theme === "dark" ? "bg-slate-950/95 border-slate-800" : "bg-white/95 border-slate-200";
   const textHeader = theme === "dark" ? "text-slate-50" : "text-slate-900";
   const mobileMenuBg = theme === "dark" ? "bg-slate-950/95" : "bg-white/95";
@@ -78,20 +73,34 @@ export default function Header({ theme, setTheme }) {
   return (
     <header className={`fixed inset-x-0 top-0 z-50 backdrop-blur-xl border-b transition-colors duration-500 ${bgHeader} ${textHeader}`}>
       <div className="max-w-6xl mx-auto px-4">
-        <div className="h-16 flex items-center justify-between">
+        <div className="h-16 flex items-center justify-between overflow-hidden">
 
-          {/* LOGO */}
-          {isHome ? (
-            <a href="#home" className="flex items-center gap-3 min-w-0" onClick={handleAnchorClick("#home")}>
-              <Logo theme={theme} />
-            </a>
-          ) : (
-            <Link to="/" className="flex items-center gap-3 min-w-0">
-              <Logo theme={theme} />
-            </Link>
-          )}
+          {/* LOGO AREA */}
+          <div className="flex items-center h-16">
+            {isHome ? (
+              <a href="#home" className="flex items-center h-full" onClick={handleAnchorClick("#home")}>
+                <Logo theme={theme} />
+              </a>
+            ) : (
+              <Link to="/" className="flex items-center h-full">
+                <Logo theme={theme} />
+              </Link>
+            )}
+            
+            {/* DİKEY ÇİZGİ VE METİN - YERİ SABİTLENDİ */}
+            <div className="flex items-center gap-3 border-l-2 border-indigo-500/40 h-8 pl-4 ml-2 transition-colors duration-500">
+              <div className="flex flex-col justify-center">
+                <span className={`text-[15px] font-bold tracking-tight leading-tight transition-colors duration-500 ${theme === "dark" ? "text-white" : "text-slate-900"}`}>
+                  Araban Kaç Para?
+                </span>
+                <span className={`text-[10px] font-medium transition-colors duration-500 uppercase tracking-widest ${theme === "dark" ? "text-slate-400" : "text-slate-500"}`}>
+                  Kurumsal teklif karşılaştırma
+                </span>
+              </div>
+            </div>
+          </div>
 
-          {/* DESKTOP NAV */}
+          {/* NAV */}
           {isHome && (
             <nav className="hidden md:flex items-center gap-8 text-[13px] transition-colors duration-500">
               {navItems.map((item) => (
@@ -110,8 +119,6 @@ export default function Header({ theme, setTheme }) {
 
           {/* RIGHT SIDE */}
           <div className="flex items-center gap-3">
-
-            {/* DESKTOP THEME SWITCH */}
             <div
               onClick={toggleTheme}
               className={`relative w-14 h-7 flex items-center rounded-full cursor-pointer transition-all duration-500
@@ -126,17 +133,15 @@ export default function Header({ theme, setTheme }) {
               </div>
             </div>
 
-            {/* MOBILE MENU BUTTON */}
             {isHome && (
               <button
                 type="button"
                 onClick={() => setOpen((v) => !v)}
                 className={`md:hidden inline-flex items-center justify-center h-10 w-10 rounded-xl border
                   ${theme === "dark" ? "border-white/10 bg-slate-900/60" : "border-slate-300 bg-white/60"} 
-                  text-slate-100 hover:bg-slate-900 transition-colors duration-500`}
-                aria-label={open ? "Menüyü kapat" : "Menüyü aç"}
+                  text-slate-100 transition-colors duration-500`}
               >
-                {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+                {open ? <X className="h-5 w-5 text-current" /> : <Menu className="h-5 w-5 text-current" />}
               </button>
             )}
           </div>
@@ -147,7 +152,6 @@ export default function Header({ theme, setTheme }) {
       {isHome && (
         <div className={["md:hidden fixed inset-0 z-40", open ? "pointer-events-auto" : "pointer-events-none"].join(" ")}>
           <div className={["absolute inset-0 transition-opacity duration-500", open ? `opacity-100 ${mobileOverlay}` : "opacity-0"].join(" ")} />
-
           <div
             ref={panelRef}
             className={[
@@ -157,8 +161,6 @@ export default function Header({ theme, setTheme }) {
             ].join(" ")}
           >
             <div className="p-3 flex flex-col gap-2">
-
-              {/* MOBILE THEME SWITCH */}
               <div
                 onClick={toggleTheme}
                 className={`relative w-14 h-7 flex items-center rounded-full cursor-pointer transition-all duration-500 mb-2
@@ -172,7 +174,6 @@ export default function Header({ theme, setTheme }) {
                   {theme === "dark" ? <Moon className="w-4 h-4 text-gray-800" /> : <Sun className="w-4 h-4 text-yellow-500" />}
                 </div>
               </div>
-
               {navItems.map((item) => (
                 <a
                   key={item.href}
@@ -188,23 +189,22 @@ export default function Header({ theme, setTheme }) {
           </div>
         </div>
       )}
-
-      <div className={`h-px transition-colors duration-500 ${theme === "dark" ? "bg-slate-800" : "bg-slate-200"}`} />
     </header>
   );
 }
 
 function Logo({ theme }) {
-  return (
-    <>
-      <div className={`h-10 w-10 rounded-xl overflow-hidden border flex items-center justify-center transition-colors duration-500 ${theme === "dark" ? "border-white/10 bg-slate-900" : "border-slate-300 bg-white"}`}>
-        <img src="/logo.jpeg" alt="Logo" className="h-full w-full object-cover" draggable={false} />
-      </div>
+  const logoSrc = theme === "dark" ? "/logo_beyaz.webp" : "/logo_siyah.webp";
 
-      <div className="min-w-0 leading-tight">
-        <div className={`text-[13px] font-semibold truncate transition-colors duration-500 ${theme === "dark" ? "text-white" : "text-slate-900"}`}>Araban Kaç Para?</div>
-        <div className={`text-[11px] truncate transition-colors duration-500 ${theme === "dark" ? "text-slate-400" : "text-slate-500"}`}>Kurumsal teklif karşılaştırma</div>
-      </div>
-    </>
+  return (
+    <div className="h-full flex items-center flex-shrink-0">
+      <img 
+        src={logoSrc} 
+        alt="Logo" 
+        // Scale yerine yüksekliği kontrol ederek hizayı sabitledik
+        className="h-[200px] w-auto object-contain transition-all duration-500" 
+        draggable={false} 
+      />
+    </div>
   );
 }
