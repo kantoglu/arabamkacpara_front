@@ -82,7 +82,6 @@ function LoadingState() {
 function OfferCard({ offer, index, isBest }) {
   const shownPrice = Number(offer?.price ?? offer?.offer ?? 0);
   
-  // Sadece ilk iki teklif için ücretsiz ekspertiz ibaresi (index 0 ve 1)
   const isFreeExpertise = index === 0 || index === 1;
 
   return (
@@ -96,21 +95,21 @@ function OfferCard({ offer, index, isBest }) {
       `}
     >
       {/* Üst Rozet Alanı */}
-      <div className="absolute top-0 right-0 flex flex-col items-end">
-        {isBest && (
-          <div className="bg-emerald-400 text-slate-900 px-4 py-1.5 text-xs font-bold rounded-bl-xl flex items-center gap-1">
-            <Trophy className="w-3 h-3" />
-            En İyi Teklif
-          </div>
-        )}
-        
-        {isFreeExpertise && (
-          <div className={`px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-bl-lg shadow-sm border-l border-b border-white/20
-            ${isBest ? "bg-emerald-500 text-white" : "bg-indigo-500 text-white"}`}>
-            Ücretsiz Ekspertiz
-          </div>
-        )}
-      </div>
+<div className="absolute top-0 left-0 flex flex-col items-start">
+  {isBest && (
+    <div className="bg-emerald-400 text-slate-900 px-3 py-1 text-[10px] font-bold rounded-br-xl flex items-center gap-1">
+      <Trophy className="w-3 h-3" />
+      En İyi Teklif
+    </div>
+  )}
+</div>
+
+{isFreeExpertise && (
+  <div className="absolute top-0 right-0 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-wider rounded-bl-lg shadow-sm border-l border-b border-white/20
+      bg-indigo-500 text-white">
+    Ücretsiz Ekspertiz
+  </div>
+)}
 
       <div className="p-6">
         <div className="mb-4">
